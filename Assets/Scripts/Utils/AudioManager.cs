@@ -13,12 +13,11 @@ public class AudioManager : MonoSingleton<AudioManager>
     private Dictionary<int, string> audioPathDict;      // 存放音频文件路径
 
     private AudioSource musicAudioSource;
+    private AudioSource soundAudioSource;
 
-    private List<AudioSource> unusedSoundAudioSourceList;   // 存放可以使用的音频组件
+   
 
-    private List<AudioSource> usedSoundAudioSourceList;     // 存放正在使用的音频组件
-
-    private Dictionary<int, AudioClip> audioClipDict;       // 缓存音频文件
+    private Dictionary<int, AudioClip> audioClipDict ;       // 缓存音频文件
 
     private float musicVolume = 1;
 
@@ -28,7 +27,7 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     private string soundVolumePrefs = "SoundVolume";
 
-    private int poolCount = 3;         // 对象池数量
+    
 
     void Awake()
     {
@@ -40,14 +39,16 @@ public class AudioManager : MonoSingleton<AudioManager>
             //{ 1, "Music/Background" },
             //{ 2, "Music/BattleScene" },
             { 11, "Music/Error"},
-            { 12, "/Music/Win"},
+            { 12, "Music/Win"},
            
         };
 
         musicAudioSource = gameObject.AddComponent<AudioSource>();
-        unusedSoundAudioSourceList = new List<AudioSource>();
-        usedSoundAudioSourceList = new List<AudioSource>();
+        soundAudioSource = gameObject.AddComponent<AudioSource>();
+        
         audioClipDict = new Dictionary<int, AudioClip>();
+       
+       
         // 先加载
         foreach (var item in audioPathDict)
         {
@@ -55,7 +56,11 @@ public class AudioManager : MonoSingleton<AudioManager>
             if (!audioClipDict.ContainsKey(item.Key))
             {
                 AudioClip ac = Resources.Load(audioPathDict[item.Key]) as AudioClip;
-                audioClipDict.Add(item.Key, ac);
+                if(ac)
+                {
+                    audioClipDict.Add(item.Key, ac);
+                }
+               
             }
         }
 
@@ -70,7 +75,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         }
         if (PlayerPrefs.HasKey(soundVolumePrefs))
         {
-            musicVolume = PlayerPrefs.GetFloat(soundVolumePrefs);
+            soundVolume = PlayerPrefs.GetFloat(soundVolumePrefs);
         }
     }
 
@@ -84,7 +89,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         // 通过Tween将声音淡入淡出
         DOTween.To(() => musicAudioSource.volume, value => musicAudioSource.volume = value, 0, 0.5f).OnComplete(() =>
         {
-            musicAudioSource.clip = GetAudioClip(id);
+            musicAudioSource.clip = audioClipDict[id];
             musicAudioSource.clip.LoadAudioData();
             musicAudioSource.loop = loop;
             musicAudioSource.volume = musicVolume;
@@ -99,28 +104,12 @@ public class AudioManager : MonoSingleton<AudioManager>
     /// <param name="id"></param>
     public void PlaySound(int id, Action action = null)
     {
-        if (unusedSoundAudioSourceList.Count != 0)
-        {
-            AudioSource audioSource = UnusedToUsed();
-            audioSource.clip = GetAudioClip(id);
-            audioSource.clip.LoadAudioData();
-            audioSource.Play();
-
-            StartCoroutine(WaitPlayEnd(audioSource, action));
-        }
-        else
-        {
-            AddAudioSource();
-
-            AudioSource audioSource = UnusedToUsed();
-            audioSource.clip = GetAudioClip(id);
-            audioSource.clip.LoadAudioData();
-            audioSource.volume = soundVolume;
-            audioSource.loop = false;
-            audioSource.Play();
-
-            StartCoroutine(WaitPlayEnd(audioSource, action));
-        }
+            soundAudioSource.clip = audioClipDict[id];
+            soundAudioSource.clip.LoadAudioData();
+            soundAudioSource.Play();
+            StartCoroutine(WaitPlayEnd(soundAudioSource, action));
+        
+        
     }
 
     /// <summary>
@@ -142,7 +131,7 @@ public class AudioManager : MonoSingleton<AudioManager>
     IEnumerator WaitPlayEnd(AudioSource audioSource, Action action)
     {
         yield return new WaitUntil(() => { return !audioSource.isPlaying; });
-        UsedToUnused(audioSource);
+       //xxx
         if (action != null)
         {
             action();
@@ -166,55 +155,11 @@ public class AudioManager : MonoSingleton<AudioManager>
         return audioClipDict[id];
     }
 
-    /// <summary>
-    /// 添加音频组件
-    /// </summary>
-    /// <returns></returns>
-    private AudioSource AddAudioSource()
-    {
-        if (unusedSoundAudioSourceList.Count != 0)
-        {
-            return UnusedToUsed();
-        }
-        else
-        {
-            AudioSource audioSource = gameObject.AddComponent<AudioSource>();
-            unusedSoundAudioSourceList.Add(audioSource);
-            return audioSource;
-        }
-    }
+   
 
-    /// <summary>
-    /// 将未使用的音频组件移至已使用集合里
-    /// </summary>
-    /// <returns></returns>
-    private AudioSource UnusedToUsed()
-    {
-        AudioSource audioSource = unusedSoundAudioSourceList[0];
-        unusedSoundAudioSourceList.RemoveAt(0);
-        usedSoundAudioSourceList.Add(audioSource);
-        return audioSource;
-    }
+  
 
-    /// <summary>
-    /// 将使用完的音频组件移至未使用集合里
-    /// </summary>
-    /// <param name="audioSource"></param>
-    private void UsedToUnused(AudioSource audioSource)
-    {
-        if (usedSoundAudioSourceList.Contains(audioSource))
-        {
-            usedSoundAudioSourceList.Remove(audioSource);
-        }
-        if (unusedSoundAudioSourceList.Count >= poolCount)
-        {
-            Destroy(audioSource);
-        }
-        else if (audioSource != null && !unusedSoundAudioSourceList.Contains(audioSource))
-        {
-            unusedSoundAudioSourceList.Add(audioSource);
-        }
-    }
+   
 
     /// <summary>
     /// 修改背景音乐音量
@@ -235,15 +180,7 @@ public class AudioManager : MonoSingleton<AudioManager>
     public void ChangeSoundVolume(float volume)
     {
         soundVolume = volume;
-        for (int i = 0; i < unusedSoundAudioSourceList.Count; i++)
-        {
-            unusedSoundAudioSourceList[i].volume = volume;
-        }
-        for (int i = 0; i < usedSoundAudioSourceList.Count; i++)
-        {
-            usedSoundAudioSourceList[i].volume = volume;
-        }
-
+        soundAudioSource.volume = volume;      
         PlayerPrefs.SetFloat(soundVolumePrefs, volume);
     }
 }

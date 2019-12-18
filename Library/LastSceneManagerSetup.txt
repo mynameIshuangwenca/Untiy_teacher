@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/MoveScene.unity
+- path: Assets/Scenes/ShowCourseSence.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

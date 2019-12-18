@@ -39,7 +39,7 @@ public class ShowCourseController : MonoSingleton<ShowCourseController>
             go.name = levelCfgList.LevelCfgTable[i].Id;
             
             GetButton(go);
-            SetCourse(go, levelCfgList.LevelCfgTable[i].mapSprite, levelCfgList.LevelCfgTable[i].title);
+            SetCourse(go, levelCfgList.LevelCfgTable[i].iconSprite, levelCfgList.LevelCfgTable[i].title);
         }
        
        

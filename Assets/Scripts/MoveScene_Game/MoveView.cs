@@ -148,6 +148,7 @@ public class MoveView : MonoSingleton<MoveView>
         Debug.Log("ReloadScene");
         // 数据处理
         MoveModel.Instance.RestartTData();
+        MoveController.Instance.CleanData();
       //  MoveModel.Instance.ClearData();
 
         // view 的复原

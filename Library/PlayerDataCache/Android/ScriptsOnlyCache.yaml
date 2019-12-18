@@ -695,4 +695,4 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/ShowCourseSence.unity
   - Assets/Scenes/MoveScene.unity
-  playerPath: G:/unityArfundation/project/teachertest/xxx.apk
+  playerPath: F:/GitResource/Unity/teachertest/xxx.apk

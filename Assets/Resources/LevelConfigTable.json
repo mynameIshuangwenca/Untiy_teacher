@@ -5,124 +5,146 @@
     {
       "Id": "0001",
       "title": "下雨了",
-      "mapSprite": "/1-1-1/1-1-1下雨啦.jpg"
+      "mapSprite": "/1-1-1/1-1-1下雨啦.jpg",
+      "iconSprite": "/1-1-1/1-1-2下雨啦.jpg"
 
     },
 
     {
       "Id": "0002",
       "title": "糖果牙",
-      "mapSprite": "/1-2-1/1-2-1糖果牙.jpg"
+      "mapSprite": "/1-2-1/1-2-1糖果牙.jpg",
+      "iconSprite": "/1-2-1/1-2-2糖果牙.jpg"
 
     },
     {
       "Id": "0003",
       "title": "拔萝卜",
-      "mapSprite": "/1-3-1/1-3-1拔萝卜.jpg"
+      "mapSprite": "/1-3-1/1-3-1拔萝卜.jpg",
+      "iconSprite": "/1-3-1/1-3-2拔萝卜.jpg"
 
     },
 
     {
       "Id": "0004",
       "title": "游乐会",
-      "mapSprite": "/1-4-1/1-4-1游乐会.jpg"
+      "mapSprite": "/1-4-1/1-4-1游乐会.jpg",
+      "iconSprite": "/1-4-1/1-4-2游乐会.jpg"
+
 
     },
     {
       "Id": "0005",
       "title": "小蚂蚁旅行",
-      "mapSprite": "/1-5-1/1-5-1小蚂蚁旅行.jpg"
+      "mapSprite": "/1-5-1/1-5-1小蚂蚁旅行.jpg",
+      "iconSprite": "/1-5-1/1-5-2小蚂蚁旅行.jpg"
 
     },
     {
       "Id": "0006",
       "title": "蜡笔回家",
-      "mapSprite": "/1-6-1/1-6-1蜡笔回家.jpg"
+      "mapSprite": "/1-6-1/1-6-1蜡笔回家.jpg",
+      "iconSprite": "/1-6-1/1-6-2蜡笔回家.jpg"
 
     },
     {
       "Id": "0007",
       "title": "袋鼠跳跳跳",
-      "mapSprite": "/1-7-1/1-7-1袋鼠跳跳跳.jpg"
+      "mapSprite": "/1-7-1/1-7-1袋鼠跳跳跳.jpg",
+      "iconSprite": "/1-7-1/1-7-2袋鼠跳跳跳.jpg"
 
     },
     {
       "Id": "0008",
       "title": "蚂蚁和饼干",
-      "mapSprite": "/1-8-1/1-8-1蚂蚁和饼干.jpg"
+      "mapSprite": "/1-8-1/1-8-1蚂蚁和饼干.jpg",
+      "iconSprite": "/1-8-1/1-8-2蚂蚁和饼干.jpg"
+
 
     },
     {
       "Id": "0009",
       "title": "红仔的新家",
-      "mapSprite": "/1-9-1/1-9-1红仔的新家.jpg"
+      "mapSprite": "/1-9-1/1-9-1红仔的新家.jpg",
+      "iconSprite": "/1-9-1/1-9-2红仔的新家.jpg"
 
     },
     {
       "Id": "0010",
       "title": "太阳公公和月亮婆婆",
-      "mapSprite": "/1-10-1/1-10-1太阳公公和月亮婆婆.jpg"
+      "mapSprite": "/1-10-1/1-10-1太阳公公和月亮婆婆.jpg",
+      "iconSprite": "/1-10-1/1-10-2太阳公公和月亮婆婆.jpg"
 
     },
     {
       "Id": "0011",
       "title": "以为是只羊",
-      "mapSprite": "/2-1-1/2-1-1以为是只羊.jpg"
+      "mapSprite": "/2-1-1/2-1-1以为是只羊.jpg",
+      "iconSprite": "/2-1-1/2-1-2以为是只羊.jpg"
 
     },
     {
       "Id": "0012",
       "title": "短尾巴、长尾巴",
-      "mapSprite": "/2-2-1/2-2-1短尾巴、长尾巴.jpg"
+      "mapSprite": "/2-2-1/2-2-1短尾巴、长尾巴.jpg",
+      "iconSprite": "/2-2-1/2-2-2短尾巴、长尾巴.jpg"
 
     },
     {
       "Id": "0013",
       "title": "小蜗牛的愿望",
-      "mapSprite": "/2-3-1/2-3-1小蜗牛的愿望.jpg"
+      "mapSprite": "/2-3-1/2-3-1小蜗牛的愿望.jpg",
+      "iconSprite": "/2-3-1/2-3-2小蜗牛的愿望.jpg"
 
     },
     {
       "Id": "0014",
       "title": "年龄丢了",
-      "mapSprite": "/2-4-1/2-4-1年龄丢了.jpg"
+      "mapSprite": "/2-4-1/2-4-1年龄丢了.jpg",
+      "iconSprite": "/2-4-1/2-4-2年龄丢了.jpg"
 
     },
     {
       "Id": "0015",
       "title": "来运动",
-      "mapSprite": "/2-5-1/2-5-1来运动.jpg"
+      "mapSprite": "/2-5-1/2-5-1来运动.jpg",
+      "iconSprite": "/2-5-1/2-5-2来运动.jpg"
 
     },
 
     {
       "Id": "0016",
       "title": "堆雪人",
-      "mapSprite": "/2-6-1/2-6-1堆雪人.jpg"
+      "mapSprite": "/2-6-1/2-6-1堆雪人.jpg",
+      "iconSprite": "/2-6-1/2-6-2堆雪人.jpg"
 
     },
     {
       "Id": "0017",
       "title": "白胡子爷爷造船",
-      "mapSprite": "/2-7-1/2-7-1白胡子爷爷造船.jpg"
+      "mapSprite": "/2-7-1/2-7-1白胡子爷爷造船.jpg",
+      "iconSprite": "/2-7-1/2-7-2白胡子爷爷造船.jpg.jpg"
 
     },
     {
       "Id": "0018",
       "title": "三角爷爷圆奶奶",
-      "mapSprite": "/2-8-1/2-8-1三角爷爷圆奶奶.jpg"
+      "mapSprite": "/2-8-1/2-8-1三角爷爷圆奶奶.jpg",
+      "iconSprite": "/2-8-1/2-8-2三角爷爷圆奶奶.jpg"
 
     },
     {
       "Id": "0019",
       "title": "小雁灰灰",
-      "mapSprite": "/2-9-1/2-9-1小雁灰灰.jpg"
+      "mapSprite": "/2-9-1/2-9-1小雁灰灰.jpg",
+      "iconSprite": "/2-9-1/2-9-1小雁灰灰.jpg"
 
     },
     {
       "Id": "0020",
       "title": "板牙兔的一天",
-      "mapSprite": "/2-10-1/2-10-1板牙兔的一天.jpg"
+      "mapSprite": "/2-10-1/2-10-1板牙兔的一天.jpg",
+      "iconSprite": "/2-10-1/2-10-2板牙兔的一天.jpg"
 
     }
 

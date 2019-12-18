@@ -9,6 +9,7 @@ public class LevelCfg
     public String Id;
     public string title;
     public string mapSprite;// 地图的图片
+    public string iconSprite;
 
 }
 

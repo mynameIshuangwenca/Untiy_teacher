@@ -13,6 +13,7 @@ public class MoveController : MonoSingleton<MoveController>
     public GameObject virtualPlayerPrefab;
     private GameObject virtualPlayer;
     private EndDrogMess virtualMess;
+    private static float virtRotate = 0;
     public Sprite[] arrowSprite;
     public GameObject[] dirtPrefabs;
     public Transform arrowParent;
@@ -36,7 +37,7 @@ public class MoveController : MonoSingleton<MoveController>
 
     private void Awake()
     {
-      
+        virtRotate = 0;
         PlayerDrog.EndDrog += this.EndDrog;
         ArrowDrog.ArrowEndDrog += ArrowEndDrog;
         gameState = GameState.prepartion;
@@ -190,14 +191,14 @@ public class MoveController : MonoSingleton<MoveController>
             else if (endDrogMess.Dirt == 2)
             {
                 virtualMess.Dirt = Tool.Instance.TurnLeft(virtualMess.Dirt);
-                virtualPlayer.transform.DORotate(new Vector3(0, 0, Util.virtTD[virtualMess.Dirt]), 2f);
+                VTurnLeft();
                 // virtualPlayer.GetComponent<Image>().sprite = playerSprite[virtualMess.Dirt];
             }
             else if (endDrogMess.Dirt == 3)
             {
                 virtualMess.Dirt = Tool.Instance.TurnRight(virtualMess.Dirt);
                 //  virtualPlayer.GetComponent<Image>().sprite = playerSprite[virtualMess.Dirt];
-                virtualPlayer.transform.DORotate(new Vector3(0, 0, Util.virtTD[virtualMess.Dirt]), 2f);
+                VTurnRight();
             }
 
             else
@@ -226,13 +227,13 @@ public class MoveController : MonoSingleton<MoveController>
             {
                 virtualMess.Dirt = Tool.Instance.TurnLeft(virtualMess.Dirt);
                 // virtualPlayer.GetComponent<Image>().sprite = playerSprite[virtualMess.Dirt];
-                virtualPlayer.transform.DORotate(new Vector3(0, 0, Util.virtTD[virtualMess.Dirt]), 2f);
+                VTurnLeft();
             }
             else if (endDrogMess.Dirt == 3)
             {
                 virtualMess.Dirt = Tool.Instance.TurnRight(virtualMess.Dirt);
                 //virtualPlayer.GetComponent<Image>().sprite = playerSprite[virtualMess.Dirt];
-                virtualPlayer.transform.DORotate(new Vector3(0, 0, Util.virtTD[virtualMess.Dirt]), 2f);
+                VTurnRight();
             }
 
             else
@@ -258,13 +259,13 @@ public class MoveController : MonoSingleton<MoveController>
             {
                 virtualMess.Dirt = Tool.Instance.TurnLeft(virtualMess.Dirt);
                 // virtualPlayer.GetComponent<Image>().sprite = playerSprite[virtualMess.Dirt];
-                virtualPlayer.transform.DORotate(new Vector3(0, 0, Util.virtTD[virtualMess.Dirt]), 2f);
+                VTurnLeft();
             }
             else if (endDrogMess.Dirt == 3)
             {
                 virtualMess.Dirt = Tool.Instance.TurnRight(virtualMess.Dirt);
                 // virtualPlayer.GetComponent<Image>().sprite = playerSprite[virtualMess.Dirt];
-                virtualPlayer.transform.DORotate(new Vector3(0, 0, Util.virtTD[virtualMess.Dirt]), 2f);
+                VTurnRight();
             }
             else
             {
@@ -290,13 +291,13 @@ public class MoveController : MonoSingleton<MoveController>
             {
                 virtualMess.Dirt = Tool.Instance.TurnLeft(virtualMess.Dirt);
                 //virtualPlayer.GetComponent<Image>().sprite = playerSprite[virtualMess.Dirt];
-                virtualPlayer.transform.DORotate(new Vector3(0, 0, Util.virtTD[virtualMess.Dirt]), 2f);
+                VTurnLeft();
             }
             else if (endDrogMess.Dirt == 3)
             {
                 virtualMess.Dirt = Tool.Instance.TurnRight(virtualMess.Dirt);
                 //virtualPlayer.GetComponent<Image>().sprite = playerSprite[virtualMess.Dirt];
-                virtualPlayer.transform.DORotate(new Vector3(0, 0, Util.virtTD[virtualMess.Dirt]), 2f);
+                VTurnRight();
             }
             else
             {
@@ -345,7 +346,17 @@ public class MoveController : MonoSingleton<MoveController>
         }
     }
 
+    private void VTurnLeft()
+    {
+       virtRotate += 90;
+        virtualPlayer.transform.DOLocalRotate(new Vector3(0, 0, virtRotate), 3f);
+    }
 
+    private void VTurnRight()
+    {
+        virtRotate -= 90;
+        virtualPlayer.transform.DOLocalRotate(new Vector3(0, 0, virtRotate), 3f);
+    }
 
     private void TurnLeft()
     {
@@ -428,6 +439,9 @@ public class MoveController : MonoSingleton<MoveController>
     }
 
 
-    
+    public  void CleanData()
+    {
+        virtRotate = 0;
+    }
 
 }

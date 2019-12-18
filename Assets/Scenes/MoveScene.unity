@@ -1920,7 +1920,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: b2f6e1878436c9747a0eecd325d5075c,
+      objectReference: {fileID: 21300000, guid: fc8b5e94e2954e041873d03b73bf296e,
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5942d6685c832f14d8141a20da715725, type: 3}
@@ -2446,7 +2446,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: c3a065207d4307b479233484d7a664ee,
+      objectReference: {fileID: 21300000, guid: a94c6fe3977b76049a7a24032eaf03c6,
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5942d6685c832f14d8141a20da715725, type: 3}
@@ -2491,22 +2491,22 @@ MonoBehaviour:
   virtualPlayerPrefab: {fileID: 3287488397462880402, guid: 838b5a6ee1f444446b7c3cb4f2d6b0fe,
     type: 3}
   arrowSprite:
-  - {fileID: 21300000, guid: 5162b8933ede6a74b948bded8dd76415, type: 3}
-  - {fileID: 21300000, guid: efcc062506b436647b40a202065c1657, type: 3}
-  - {fileID: 21300000, guid: fd71e0e841274db4fb60e699df5d42aa, type: 3}
-  - {fileID: 21300000, guid: 9f104c3eac964504896d313dd0f11569, type: 3}
-  - {fileID: 21300000, guid: 2e8cff5cf9df1ed4592b8a538d152543, type: 3}
-  - {fileID: 21300000, guid: 83d838dbce05469478b67b25aedbde57, type: 3}
-  - {fileID: 21300000, guid: c55ee461b9b43f141bad8b9a686a86e2, type: 3}
-  - {fileID: 21300000, guid: ad206537e7b85b845ac397782a9ffff4, type: 3}
-  - {fileID: 21300000, guid: 8bfa68e899767ea44a8d1024171d7a74, type: 3}
-  - {fileID: 21300000, guid: 436dec8a066364c4698c17a4ba55dc07, type: 3}
-  - {fileID: 21300000, guid: 8141a19b8849248499989cf3dbeca469, type: 3}
-  - {fileID: 21300000, guid: 4c9d07e67c3e08b418c81610dc3626b9, type: 3}
+  - {fileID: 21300000, guid: f5fafd9a8a7bc9845b25f735633dfc83, type: 3}
+  - {fileID: 21300000, guid: da23a5b24ae36104cadb48702fa7dd52, type: 3}
+  - {fileID: 21300000, guid: 90cca03a2addf2c4c931fd7cf4152771, type: 3}
+  - {fileID: 21300000, guid: a040f1b780b5ddc4fb4956ad3909d6c7, type: 3}
+  - {fileID: 21300000, guid: f06fcb071fc9fe14b8632718e1030033, type: 3}
+  - {fileID: 21300000, guid: f5636a2a7e4a65b4fb93c22c234fd1ce, type: 3}
+  - {fileID: 21300000, guid: b4ac107ea8504424aa6bfc09a9e08ffb, type: 3}
+  - {fileID: 21300000, guid: 751387fa1c1359941b2cd0718b271a0e, type: 3}
+  - {fileID: 21300000, guid: 6546eb69412304149a188fd936c3938b, type: 3}
+  - {fileID: 21300000, guid: 25d57c9d6c8e78544b702be4a15fe3ed, type: 3}
+  - {fileID: 21300000, guid: fe494b5632d66fb4cb62d6615e9a9218, type: 3}
+  - {fileID: 21300000, guid: 782069d25c2df794da62de40ac75d2b7, type: 3}
   dirtPrefabs:
   - {fileID: 6618760469795704477, guid: a11f8458c2631e940ad4b100b6eb503f, type: 3}
   - {fileID: 107638065617054200, guid: 3bd688c7b6c14fa458683022bbff40af, type: 3}
-  - {fileID: 4843481763419694932, guid: faa3887ad5f92954387874892708dd4a, type: 3}
+  - {fileID: 2303930209217092288, guid: 020ee3dc361ed714298007fcd3a47500, type: 3}
   arrowParent: {fileID: 1832229114}
   playerSprite:
   - {fileID: 21300000, guid: e8c1a7ecf4e07634d95f99eadcedfd9e, type: 3}
@@ -2561,10 +2561,10 @@ MonoBehaviour:
   routePrefab: {fileID: 6059037243529667646, guid: 234a9b4f53b6d4048834d3275a0afc19,
     type: 3}
   routeDirtSpite:
-  - {fileID: 21300000, guid: 9f11758dbfccfc249844f4ea993a7b34, type: 3}
-  - {fileID: 21300000, guid: c3a065207d4307b479233484d7a664ee, type: 3}
-  - {fileID: 21300000, guid: 2f09708495e1aed4ba0bfdf9d2483061, type: 3}
-  - {fileID: 21300000, guid: b2f6e1878436c9747a0eecd325d5075c, type: 3}
+  - {fileID: 21300000, guid: 812e47eb616258a428ea761a3f1a5598, type: 3}
+  - {fileID: 21300000, guid: a94c6fe3977b76049a7a24032eaf03c6, type: 3}
+  - {fileID: 21300000, guid: c8abaff675cfbcb4fafb6493bc278bcd, type: 3}
+  - {fileID: 21300000, guid: fc8b5e94e2954e041873d03b73bf296e, type: 3}
 --- !u!1 &1663033720
 GameObject:
   m_ObjectHideFlags: 0
@@ -2935,7 +2935,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 2f09708495e1aed4ba0bfdf9d2483061,
+      objectReference: {fileID: 21300000, guid: c8abaff675cfbcb4fafb6493bc278bcd,
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5942d6685c832f14d8141a20da715725, type: 3}
