@@ -11,9 +11,11 @@ public class MoveModel : MonoSingleton<MoveModel>
     public static Dictionary<string, UnitPosition> mapData = new Dictionary<string, UnitPosition>();
     // 在route中的箭头的回收
     private List<GameObject> routeObj = new List<GameObject>();
+    // 在map上的箭头的回收
     private List<GameObject> arrowAndPlayerObj = new List<GameObject>();
-
+    
     public List<GameObject> RouteObj { get => routeObj; set => routeObj = value; }
+    
     public List<GameObject> ArrowAndPlayerObj { get => arrowAndPlayerObj; set => arrowAndPlayerObj = value; }
     //此时player的方向角度
     public static float rotate = 0f;
@@ -73,7 +75,7 @@ public class MoveModel : MonoSingleton<MoveModel>
         {
             ObjectPool.Instance.CollectObject(obj);
         }
-
+        routeObj.Clear();
     }
     public void cleanArrowAndPlayerObj()
     {
@@ -81,6 +83,7 @@ public class MoveModel : MonoSingleton<MoveModel>
         {
             ObjectPool.Instance.CollectObject(obj);
         }
+        ArrowAndPlayerObj.Clear();
 
     }
 
@@ -102,6 +105,26 @@ public class MoveModel : MonoSingleton<MoveModel>
         rotate = 0f;
 
     }
+
+
+    public  int getLast()
+    {
+        //第一次的不能算进去
+        return order.Count >= 2 ? order[order.Count - 2] : 0;
+
+
+        //return order[order.Count - 2];// 最后一次的上一次
+    }
+
+
+    public bool IsBack()
+    {
+        int b = getLast();
+        return getLast() == 1 ? true : false;
+       
+    }
+
+
 
 
 

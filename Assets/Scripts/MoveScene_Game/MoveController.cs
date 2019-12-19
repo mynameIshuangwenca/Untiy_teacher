@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System;
 
+
 public class MoveController : MonoSingleton<MoveController>
 {
 
@@ -38,8 +39,8 @@ public class MoveController : MonoSingleton<MoveController>
     private void Awake()
     {
         virtRotate = 0;
-        PlayerDrog.EndDrog += this.EndDrog;
-        ArrowDrog.ArrowEndDrog += ArrowEndDrog;
+        //PlayerDrog.EndDrog += this.EndDrog;
+        //ArrowDrog.ArrowEndDrog += ArrowEndDrog;
         gameState = GameState.prepartion;
         InitGame();
        
@@ -66,7 +67,7 @@ public class MoveController : MonoSingleton<MoveController>
             Tool.Instance.getSprite(levelCfg.mapSprite, image);
         
        
-            
+        
         
         
 
@@ -89,7 +90,7 @@ public class MoveController : MonoSingleton<MoveController>
 
     }
 
-    public  void ArrowEndDrog(EndDrogMess endDrogMess)
+    public  bool ArrowEndDrog(EndDrogMess endDrogMess)
     {
 
         Debug.Log("ArrowEndDrog" + endDrogMess.Dirt);
@@ -97,11 +98,13 @@ public class MoveController : MonoSingleton<MoveController>
         // 没有越界 
         // dirt  PlayerNext中已经修改了
         int dirt = virtualMess.Dirt;//
-        if (PlayerNext(endDrogMess))
+        bool flag = PlayerNext(endDrogMess);
+        if (flag)
         {
             // 显示箭头
             GetArrowPosition(endDrogMess, dirt);
         }
+        return flag;
 
 
 
@@ -114,11 +117,24 @@ public class MoveController : MonoSingleton<MoveController>
     {
         GameObject newGo;
         Vector3 arrowPosition;
-        Debug.Log("xxx" + Util.dirtToPos[endDrogMess.Dirt][dirt]);
-        int pos = Util.dirtToPos[endDrogMess.Dirt][dirt];
+        int pos;
+        Debug.Log("xxx" + MoveModel.Instance.IsBack());
+        if (MoveModel.Instance.IsBack())
+        {
+            pos = Util.bDirtToPos[endDrogMess.Dirt][dirt];
+        }
+
+        else
+        {
+            pos = Util.dirtToPos[endDrogMess.Dirt][dirt];
+        }
+       
         if (pos >= 4)
         {
+
             arrowPosition = MoveModel.mapData[endDrogMess.Position.Go.name].Center;
+           
+
             newGo = ObjectPool.Instance.CreateObject(dirtPrefabs[0].name, dirtPrefabs[0], arrowPosition, arrowParent);
             // 使生成的名字一致 对象池
             newGo.name = dirtPrefabs[0].name;
@@ -345,13 +361,17 @@ public class MoveController : MonoSingleton<MoveController>
             return null;
         }
     }
-
+    /// <summary>
+    /// 虚拟player 左转
+    /// </summary>
     private void VTurnLeft()
     {
        virtRotate += 90;
         virtualPlayer.transform.DOLocalRotate(new Vector3(0, 0, virtRotate), 3f);
     }
-
+    /// <summary>
+    /// 虚拟player 右转
+    /// </summary>
     private void VTurnRight()
     {
         virtRotate -= 90;
@@ -369,6 +389,8 @@ public class MoveController : MonoSingleton<MoveController>
         MoveModel.rotate -= 90;
         player.transform.DOLocalRotate(new Vector3(0, 0, MoveModel.rotate), 3f);
     }
+
+    // player 开始walk
     public void Walk()
     {
         Walk(BeforeWalk);
@@ -415,19 +437,38 @@ public class MoveController : MonoSingleton<MoveController>
        // AfterWalk();
     }
 
-   
+   /// <summary>
+   /// 物体开始走的时候 要干的事情
+   /// </summary>
     private  void BeforeWalk()
     {
         MoveView.Instance.SetRestartBtn(false);
 
+        gameState = GameState.Walking;
+
        
     }
 
-        
+/* 
+ walk 结束后的动作
+         */   
     private void AfterWalk()
     {
+        int index = MoveModel.Instance.route.Count;
+        if (index>0)
+            {
+            // 把player 的parent 设置为最后的位置
+            player.transform.parent = MoveModel.Instance.route[index-1].Go.transform;
+            }
+       
+      
         MoveModel.Instance.CleanOrder();
         MoveView.Instance.SetRestartBtn(true);
+        // 返回按键的界面
+        gameState = GameState.pressing;
+        
+       
+
     }
 
 

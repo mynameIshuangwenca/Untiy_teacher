@@ -27,6 +27,10 @@ public class Util : MonoSingleton<Util>
 
 };
 
+    public static List<List<int>> bDirtToPos = new List<List<int>>
+    {
+         new List<int>{0,1,2,3}, new List<int>{1,0,3,2}, new List<int>{10,8,9,11}, new List<int>{7,5,4,6}
+    };
 
     public static Dictionary<string, int> arrowDirt = new Dictionary<string, int> {
         {"ArrowUp",0 }, {"ArrowDown",1 }, {"ArrowLeft",2}, {"ArrowRight",3 }

@@ -30,6 +30,7 @@ namespace QmDreamer.UI
 
         public void OnBeginDrag(PointerEventData _)
         {
+            
 
 
             //  // 已经选择了player  除了player 其他的都不能拖动了
@@ -45,11 +46,16 @@ namespace QmDreamer.UI
                 // 使生成的名字一致 对象池
                 newGo.name = transform.name;
             }
-
+           
             beginParentTransform = transform.parent;
+            if (MoveController.Instance.gameState == GameState.Walking)
+            {
+                DestroyArrow();
+            }
+
             // 移动就可以复制一个
 
-            
+
             //  transform.SetParent(topOfUiT);
         }
 
@@ -159,8 +165,12 @@ namespace QmDreamer.UI
         // 代替委托
         private void EndDrog(EndDrogMess endDrogMess)
         {
-            MoveController.Instance.ArrowEndDrog(endDrogMess);
-            MoveView.Instance.ArrowEndDrog(endDrogMess);
+            if (MoveController.Instance.ArrowEndDrog(endDrogMess))
+            {
+                MoveView.Instance.ArrowEndDrog(endDrogMess);
+            }
+            
+            
 
         }
     }

@@ -19,7 +19,7 @@ public class MoveView : MonoSingleton<MoveView>
     private Button btn_Restart;
     
 
-    private List<GameObject> myGo=new List<GameObject>();
+  
 
 
     
@@ -64,8 +64,7 @@ public class MoveView : MonoSingleton<MoveView>
         btn_Start = transform.Find("/Canvas/P_Backgound/P_Controller/P_Show/P_Btn/Img_Start").GetComponent<Button>();
         btn_End = transform.Find("/Canvas/P_Backgound/P_Controller/P_Show/P_Btn/Img_End").GetComponent<Button>();
         btn_Restart = transform.Find("/Canvas/P_Backgound/P_Controller/P_Show/P_Btn/Img_Restart").GetComponent<Button>();
-        myGo.Add(playerParent);
-        myGo.Add(GridLayer);
+       
 
 
 
