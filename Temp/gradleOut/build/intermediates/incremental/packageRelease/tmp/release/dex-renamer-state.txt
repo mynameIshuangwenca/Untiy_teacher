@@ -1,0 +1,4 @@
+#Thu Dec 19 14:45:00 CST 2019
+base.0=F\:\\GitResource\\Unity\\teachertest\\Temp\\gradleOut\\build\\intermediates\\transforms\\dexMerger\\release\\0
+path.0=classes.dex
+renamed.0=classes.dex
