@@ -25,8 +25,8 @@ public class MoveView : MonoSingleton<MoveView>
     
     private void Awake()
     {
-        PlayerDrog.EndDrog += EndDrog;
-        ArrowDrog.ArrowEndDrog += ArrowEndDrog;
+        //PlayerDrog.EndDrog += EndDrog;
+        //ArrowDrog.ArrowEndDrog += ArrowEndDrog;
         // DontDestroyOnLoad(this.gameObject);
         InitObj();
         InitFun();
@@ -81,7 +81,8 @@ public class MoveView : MonoSingleton<MoveView>
 
     public void Btn_End()
     {
-        MoveController.Instance.SetVirtualPlayer(false);
+        // MoveController.Instance.SetVirtualPlayer(false);
+      //  MoveModel.Instance.FadeArrow(false);
     }
     public void EndDrog(EndDrogMess endDrogMess)
     {
@@ -145,13 +146,17 @@ public class MoveView : MonoSingleton<MoveView>
     {
        
         Debug.Log("ReloadScene");
+
+        // view 的复原
+        SetDrog(true);
+        MoveModel.Instance.FadeArrow(true);
+
         // 数据处理
         MoveModel.Instance.RestartTData();
         MoveController.Instance.CleanData();
       //  MoveModel.Instance.ClearData();
 
-        // view 的复原
-        SetDrog(true);
+        
         //Tool.Instance.Reload();
 
         //MoveModel.Instance.ClearData();

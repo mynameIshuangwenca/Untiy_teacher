@@ -118,7 +118,7 @@ public class MoveController : MonoSingleton<MoveController>
         GameObject newGo;
         Vector3 arrowPosition;
         int pos;
-        Debug.Log("xxx" + MoveModel.Instance.IsBack());
+       
         if (MoveModel.Instance.IsBack())
         {
             pos = Util.bDirtToPos[endDrogMess.Dirt][dirt];
@@ -166,6 +166,8 @@ public class MoveController : MonoSingleton<MoveController>
         }
        
           newGo.GetComponent<Image>().sprite = arrowSprite[pos];
+
+        // 存储新的箭头
         MoveModel.Instance.ArrowAndPlayerObj.Add(newGo);
     }
 
@@ -466,8 +468,9 @@ public class MoveController : MonoSingleton<MoveController>
         MoveView.Instance.SetRestartBtn(true);
         // 返回按键的界面
         gameState = GameState.pressing;
-        
-       
+        MoveModel.Instance.FadeArrow(false);
+
+
 
     }
 

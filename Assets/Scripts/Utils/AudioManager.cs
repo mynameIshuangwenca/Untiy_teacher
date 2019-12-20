@@ -38,7 +38,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         {
             //{ 1, "Music/Background" },
             //{ 2, "Music/BattleScene" },
-            { 11, "Music/Error"},
+            { 11, "Music/Win"},
             { 12, "Music/Win"},
            
         };
@@ -107,7 +107,7 @@ public class AudioManager : MonoSingleton<AudioManager>
             soundAudioSource.clip = audioClipDict[id];
             soundAudioSource.clip.LoadAudioData();
             soundAudioSource.Play();
-            StartCoroutine(WaitPlayEnd(soundAudioSource, action));
+           // StartCoroutine(WaitPlayEnd(soundAudioSource, action));
         
         
     }

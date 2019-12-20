@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MoveModel : MonoSingleton<MoveModel>
 {
@@ -123,6 +124,43 @@ public class MoveModel : MonoSingleton<MoveModel>
         return getLast() == 1 ? true : false;
        
     }
+
+
+    public  void FadeArrowInRoute(bool flag)
+    {
+        for (int i=0;i< routeObj.Count;i++)
+        {
+            if(routeObj[i].activeSelf)
+            {
+                Tool.Instance.Fade(routeObj[i].GetComponent<Image>(), flag);
+               
+            }
+           
+        }
+    }
+
+    public void FadeArrowInMap(bool flag)
+    {
+        for (int i = 0; i < arrowAndPlayerObj.Count; i++)
+        {
+            
+            if (arrowAndPlayerObj[i].tag!="Player"&& arrowAndPlayerObj[i].activeSelf)
+            {
+                Tool.Instance.Fade(arrowAndPlayerObj[i].GetComponent<Image>(), flag);
+                
+            }
+
+        }
+    }
+
+
+    public void FadeArrow(bool flag)
+    {
+        Debug.Log("FadeArrow");
+        FadeArrowInRoute(flag);
+        FadeArrowInMap( flag);
+    }
+
 
 
 

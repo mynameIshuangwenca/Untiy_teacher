@@ -191,6 +191,19 @@ public class Tool : MonoSingleton<Tool>
     }
 
    
-   
+    public  void Fade (Image img ,bool flag)
+    {
+      Color  color = img.color;
+        if (flag)
+        {
+            img.color = new Color(color.r, color.g, color.b, 1f);
+        }
+        else
+        {
+            img.color = new Color(color.r, color.g, color.b, 0.5f);
+        }
+
+       
+    }
 
 }
