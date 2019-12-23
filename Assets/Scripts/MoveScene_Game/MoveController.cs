@@ -456,18 +456,35 @@ public class MoveController : MonoSingleton<MoveController>
          */   
     private void AfterWalk()
     {
-        int index = MoveModel.Instance.route.Count;
-        if (index>0)
-            {
-            // 把player 的parent 设置为最后的位置
-            player.transform.parent = MoveModel.Instance.route[index-1].Go.transform;
-            }
-       
-      
-        MoveModel.Instance.CleanOrder();
+        Debug.Log("AfterWalk");
         MoveView.Instance.SetRestartBtn(true);
         // 返回按键的界面
         gameState = GameState.pressing;
+        int index = MoveModel.Instance.route.Count;
+       // 不能最后为Null   
+
+        if (index>0 )
+            {
+                int i = 0;
+
+            //  找到不为null 做为父位置
+                while (i<=index && MoveModel.Instance.route[index - i-1]==null)
+                {
+                    i++;
+                }
+
+                if (MoveModel.Instance.route[index - i]!=null )
+                {
+                // 把player 的parent 设置为最后的位置
+                player.transform.parent = MoveModel.Instance.route[index - i].Go.transform;
+               }
+            
+           
+         }
+        
+
+
+        MoveModel.Instance.CleanOrder();
         MoveModel.Instance.FadeArrow(false);
 
 

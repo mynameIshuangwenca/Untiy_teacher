@@ -38,7 +38,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         {
             //{ 1, "Music/Background" },
             //{ 2, "Music/BattleScene" },
-            { 11, "Music/Win"},
+            { 11, "Music/Error01"},
             { 12, "Music/Win"},
            
         };
