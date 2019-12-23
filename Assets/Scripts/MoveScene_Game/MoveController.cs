@@ -473,19 +473,19 @@ public class MoveController : MonoSingleton<MoveController>
                     i++;
                 }
 
-                if (MoveModel.Instance.route[index - i]!=null )
+                if (MoveModel.Instance.route[index - i-1]!=null )
                 {
                 // 把player 的parent 设置为最后的位置
-                player.transform.parent = MoveModel.Instance.route[index - i].Go.transform;
+                player.transform.parent = MoveModel.Instance.route[index - i - 1].Go.transform;
                }
-            
            
-         }
-        
 
-
+        }
         MoveModel.Instance.CleanOrder();
         MoveModel.Instance.FadeArrow(false);
+
+
+
 
 
 
