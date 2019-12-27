@@ -57,6 +57,9 @@ public class ObjectPool : MonoSingleton<ObjectPool>
     /// <param name="go">Go.</param>
     public void CollectObject(GameObject go)
     {
+
+        // 防止没有也回收
+        if (go == null) return;
         go.SetActive(false);
     }
 

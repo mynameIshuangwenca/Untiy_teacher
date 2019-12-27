@@ -1,5 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 public enum GameState
 {
@@ -12,7 +16,7 @@ public enum GameState
     Fail,// 路劲走完了但是没有成功
 }
 
-
+[Serializable]
 public class UnitPosition
 {
 
@@ -28,9 +32,14 @@ public class UnitPosition
     Vector3 southWest;
     Vector3 northWest;
     private GameObject go;
-   
 
-  
+    public  UnitPosition()
+    {
+
+    }
+
+
+
     public UnitPosition(int i, int j)
     {
         this.I = i;
@@ -93,11 +102,15 @@ public class ImportantPosition
 
 
 
-
+[Serializable]
 public  class EndDrogMess
 {
     private int dirt;//方向
     private UnitPosition position;
+
+    public EndDrogMess()
+    {
+    }
 
     public EndDrogMess(int dirt, UnitPosition position)
     {
@@ -107,9 +120,11 @@ public  class EndDrogMess
 
     public int Dirt { get => dirt; set => dirt = value; }
     public UnitPosition Position { get => position; set => position = value; }
+
+   
 }
 
-
+[Serializable]
 public class DirtionMess
 {
     private string objName;//物体的名字
@@ -127,17 +142,7 @@ public class DirtionMess
     public int LeftImgUrl { get => leftImgUrl; set => leftImgUrl = value; }
     public int RightImgUrl { get => rightImgUrl; set => rightImgUrl = value; }
 }
-public class GameData : MonoBehaviour
+public class GameData 
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }

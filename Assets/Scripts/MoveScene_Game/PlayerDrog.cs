@@ -78,8 +78,8 @@ namespace QmDreamer.UI
                 // 此处应该是监听
                 SetPosAndParent(transform, go.transform);
                 transform.GetComponent<Image>().raycastTarget = true;
-
-                MoveModel.Instance.ArrowAndPlayerObj.Add(gameObject);
+                MoveModel.Instance.moveCache.Player = gameObject;
+               // MoveModel.Instance.ArrowAndPlayerObj.Add(gameObject);
                 MoveController.Instance.player = gameObject;
                 UnitPosition StartPosition = MoveModel .Instance. Fingbyname(go.name);
                 EndDrogMess endDrogMess = new EndDrogMess(dirtion, StartPosition);

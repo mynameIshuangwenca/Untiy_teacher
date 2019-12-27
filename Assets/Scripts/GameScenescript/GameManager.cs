@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,10 @@ public class GameManager : MonoSingleton<GameManager>
     private ImportantPosition needPosition = new ImportantPosition();
 
     private Button btn_Return;
-
+    public Text timeText;
+    public Button btn_startTimer;
+    public Button btn_endTimer;
+    
     public ImportantPosition NeedPosition { get => needPosition; set => needPosition = value; }
 
     private void Awake()
@@ -28,7 +32,8 @@ public class GameManager : MonoSingleton<GameManager>
     {
         btn_Return = transform.Find("/Canvas/P_Background/P_Return").GetComponent<Button>();
         btn_Return.onClick.AddListener(delegate { Tool.Instance.ReturnScene(); });
-       
+        btn_startTimer.onClick.AddListener(delegate { StartTimer(); });
+        btn_endTimer.onClick.AddListener(delegate { EndTimer(); });
     }
 
     // Start is called before the first frame update
@@ -82,6 +87,33 @@ public class GameManager : MonoSingleton<GameManager>
 
 
        
+    }
+
+    //
+    public void  StartTimer()
+    {
+        StartCoroutine("OpenTimer");
+    }
+
+
+    public void EndTimer()
+    {
+
+        StopCoroutine("OpenTimer");
+    }
+
+
+    //开启时间
+    IEnumerator OpenTimer()
+    {
+        int timer = 0;
+        timeText.text = string.Format("{0:D2}:{1:D2}", timer / 60, timer % 60);
+        while (timer >= 0)
+        {
+            yield return new WaitForSeconds(1);
+            timer++;
+            timeText.text = string.Format("{0:D2}:{1:D2}", timer / 60, timer % 60);
+        }
     }
 
 }

@@ -97,6 +97,9 @@ namespace QmDreamer.UI
             {
                 if(go.transform.parent.tag== "Position")
                 {
+
+                   
+
                     ArrowWalk(go.transform.parent);
                 }
                 else

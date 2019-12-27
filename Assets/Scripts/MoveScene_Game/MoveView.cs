@@ -78,9 +78,11 @@ public class MoveView : MonoSingleton<MoveView>
         MoveController.Instance.Walk();
        
     }
-
+//  
     public void Btn_End()
     {
+        MoveController.Instance.BackWalk();
+        
         // MoveController.Instance.SetVirtualPlayer(false);
       //  MoveModel.Instance.FadeArrow(false);
     }
@@ -92,23 +94,33 @@ public class MoveView : MonoSingleton<MoveView>
 
     private void SetDrog(bool flag)
     {
-        
-        Color color;
-        Image[] images = playerParent.GetComponentsInChildren<Image>();
-        foreach (Image img in images)
+
+        //  GetComponentsInChildren 会把自己也加进去
+        Transform[] trans = playerParent.GetComponentsInChildren<Transform>();
+      
+        foreach (Transform tran in trans )
         {
-            color = img.color;
-            if (flag)
-            {
-                img.color = new Color(color.r, color.g, color.b, color.a * 2);
-            }
-            else
-            {
-                img.color = new Color(color.r, color.g, color.b, color.a / 2);
-            }
-           
-            img.raycastTarget = flag;
+            if (tran.name == "P_Player")  continue;
+            Tool.Instance.Fade(tran.GetComponent<Image>(), flag);
+            tran.GetComponent<Image>().raycastTarget = flag;
         }
+        //Color color;
+        // Image[] images = playerParent.GetComponentsInChildren<Image>();
+        //foreach (Image img in images)
+        //{
+        // Tool.Instance. Fade(img, flag);
+        //    //color = img.color;
+        //    //if (flag)
+        //    //{
+        //    //    img.color = new Color(color.r, color.g, color.b, 1.0f);
+        //    //}
+        //    //else
+        //    //{
+        //    //    img.color = new Color(color.r, color.g, color.b,0.5f);
+        //    //}
+
+        //    img.raycastTarget = flag;
+        //}
 
     }
     public void ArrowEndDrog(EndDrogMess endDrogMess)
@@ -125,7 +137,8 @@ public class MoveView : MonoSingleton<MoveView>
         // 使生成的名字一致 对象池
         newGo.name = routePrefab.name;
         newGo.GetComponent<Image>().sprite = routeDirtSpite[dirt];
-        MoveModel.Instance.RouteObj.Add(newGo);
+        MoveModel.Instance.moveCache.ArrowRoute.Add(newGo);
+       // MoveModel.Instance.RouteObj.Add(newGo);
     }
 
 
