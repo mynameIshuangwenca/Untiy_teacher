@@ -83,6 +83,8 @@
     <Compile Include="Assets\Scripts\MoveScene_Game\MoveData.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\MoveModel.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\MoveView.cs" />
+    <Compile Include="Assets\Scripts\MoveScene_Game\ObstacleDrog.cs" />
+    <Compile Include="Assets\Scripts\MoveScene_Game\ObstacleManager.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\PlayerDrog.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\TeachMapManager.cs" />
     <Compile Include="Assets\Scripts\Poolmanager\MonoSingleton.cs" />

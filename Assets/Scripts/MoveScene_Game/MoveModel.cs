@@ -29,10 +29,15 @@ public class MoveModel : MonoSingleton<MoveModel>
     public MoveCache moveCache= new MoveCache();
     public OrderData orderData = new OrderData();
 
+    // 障碍物的位置的存储
+    public  Obstacle obstacle ;
+
     private void Awake()
     {
         //  mapData = new Dictionary<string, UnitPosition>();
-        
+        obstacle = new Obstacle();
+
+
     }
 
 
@@ -129,7 +134,10 @@ public class MoveModel : MonoSingleton<MoveModel>
         //return order[order.Count - 2];// 最后一次的上一次
     }
 
-
+    /// <summary>
+    /// 是不是后退
+    /// </summary>
+    /// <returns></returns>
     public bool IsBack()
     {
       //  int b = getLast();

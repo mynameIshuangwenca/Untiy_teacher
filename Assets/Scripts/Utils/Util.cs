@@ -36,6 +36,13 @@ public class Util : MonoSingleton<Util>
         {"ArrowUp",0 }, {"ArrowDown",1 }, {"ArrowLeft",2}, {"ArrowRight",3 }
     };
 
+    public static Dictionary<string, int> obstacleType = new Dictionary<string, int>
+    {
+        {"ObstacleUp",0 }, {"ObstacleLeft",1 }
+    };
+
+    public static int[] obstacleDirt = { 1, 0, 3, 2 };
+
 
     public static int[] turnDirt = { 0, 2, 1, 3 };
 

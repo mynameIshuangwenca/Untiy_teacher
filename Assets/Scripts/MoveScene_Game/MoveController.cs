@@ -124,6 +124,7 @@ public class MoveController : MonoSingleton<MoveController>
         // 没有越界 
         // dirt  PlayerNext中已经修改了
         int dirt = virtualMess.Dirt;//
+
         bool flag = PlayerNext(endDrogMess);
         if (flag)
         {
@@ -157,7 +158,7 @@ public class MoveController : MonoSingleton<MoveController>
        
         if (pos >= 4)
         {
-
+            // 转向
             arrowPosition = MoveModel.mapData[endDrogMess.Position.Go.name].Center;
            
 
@@ -199,7 +200,7 @@ public class MoveController : MonoSingleton<MoveController>
     }
 
 
-
+    
     private GameObject GenerateVirtualPlayer(GameObject prefab, Vector3 postion, Transform parent, int dirt)
     {
         GameObject go = ObjectPool.Instance.CreateObject("virtual", prefab, postion, parent);
@@ -213,9 +214,29 @@ public class MoveController : MonoSingleton<MoveController>
 
 
     }
-
+    /// <summary>
+    /// 根据箭头模拟下一步
+    /// </summary>
+    /// <param name="endDrogMess">箭头结束传过来的信息</param>
+    /// <returns> true 可以有下一步  false：下一步是越界</returns>
     public bool PlayerNext(EndDrogMess endDrogMess)
     {
+       int pos = Util.bDirtToPos[endDrogMess.Dirt][virtualMess.Dirt];
+        if(pos<4)// 是 上下左右 不是拐弯
+        {
+            // 判断是否有障碍物  注意：有障碍物不会加入指令
+            int type = MoveModel.Instance.obstacle.QuaryObstacle(endDrogMess.Position.Go.name, pos);
+            if (type > 0)// 有障碍物或者其他类型==不能通过
+            {
+                Debug.Log("有障碍物");
+                AudioManager.Instance.PlaySound(11);
+
+                return false;
+            }
+        }
+      
+
+
         // Debug.Log("PlayerNext      " + endDrogMess.Position.I + endDrogMess.Position.J);
         int i = endDrogMess.Position.I;
         int j = endDrogMess.Position.J;
@@ -591,6 +612,14 @@ public class MoveController : MonoSingleton<MoveController>
         MoveModel.Instance.moveCache.BackWalk();
 
       
+    }
+
+
+    public void OutIndex()
+    {
+        //提示和播放音乐
+        Debug.Log("越界了");
+        AudioManager.Instance.PlaySound(11);
     }
 
 }

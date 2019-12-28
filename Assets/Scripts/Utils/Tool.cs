@@ -167,14 +167,47 @@ public class Tool : MonoSingleton<Tool>
     {
         //如果在拆分时不需要包含空字符串，则可以使用 StringSplitOptions.RemoveEmptyEntries 选项，例如在上例中将 StringSplitOptions.None 更改成 StringSplitOptions.RemoveEmptyEntries
         string[] result = name.Split('_' );
-        i = int.Parse(result[-2]);
-        j= int.Parse(result[-1]);
+        int length = result.Length;
+        i = int.Parse(result[length-2]);
+        j= int.Parse(result[length - 1]);
 
     }
 
     public  string IJToName(int i,int j)
     {
         return "Img_Map"  +"_" + i + "_" + j;
+    }
+
+    /// <summary>
+    /// 通过名字获取周围MapPos的名字
+    /// 注意：只负责得到名字不管是不是越界
+    /// </summary>
+    /// <param name="name">传入的名字</param>
+    /// <param name="index">类型 0-3 ：上下左右</param>
+    /// <returns>得到的mapPos 名字</returns>
+    public string AroundName(string name,int index)
+    {
+        int i, j;
+        GetIJByName(name, out i, out j);
+        if (index==0)
+        {
+            i += 1;
+        }
+        else if (index==1)
+        {
+            i--;
+        }
+        else if(index==2)
+        {
+            j++;
+        }
+        else
+        {
+            j--;
+        }
+        
+        return IJToName(i, j);
+
     }
 
 

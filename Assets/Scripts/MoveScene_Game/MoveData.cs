@@ -16,17 +16,20 @@ namespace Move {
         private GameObject virutalPlayer;
         private List<GameObject> arrowMap;
         private List<GameObject> arrowRoute;
+        private List<GameObject> obstacle;
 
         public MoveCache()
         {
             ArrowMap = new List<GameObject>();
             ArrowRoute = new List<GameObject>();
+            Obstacle = new List<GameObject>();
         }
 
         public GameObject Player { get => player; set => player = value; }
         public GameObject VirutalPlayer { get => virutalPlayer; set => virutalPlayer = value; }
         public List<GameObject> ArrowMap { get => arrowMap; set => arrowMap = value; }
         public List<GameObject> ArrowRoute { get => arrowRoute; set => arrowRoute = value; }
+        public List<GameObject> Obstacle { get => obstacle; set => obstacle = value; }
 
         /// <summary>
         ///  清除player
@@ -69,6 +72,15 @@ namespace Move {
             }
             ArrowRoute.Clear();
         }
+        //清理障碍物
+        private void Cleanobstacle()
+        {
+            foreach (GameObject obj in obstacle)
+            {
+                ObjectPool.Instance.CollectObject(obj);
+            }
+            obstacle.Clear();
+        }
         /// <summary>
         ///  对缓存进行清除
         /// </summary>
@@ -80,6 +92,7 @@ namespace Move {
             //
             CleanArrowMap();
             CleanArrowRoute();
+            Cleanobstacle();
 
         }
        /// <summary>
