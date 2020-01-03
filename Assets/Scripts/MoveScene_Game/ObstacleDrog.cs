@@ -7,10 +7,11 @@ using System;
 
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
+using Move;
+using DG.Tweening;
 namespace QmDreamer.UI
 {
-    public class ObstacleDrog : Button, IDragHandler, IBeginDragHandler, IEndDragHandler
+    public class ObstacleDrog : Button, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
     {
         private Transform beginParentTransform; //记录开始拖动时的父级对象  
         private Transform topOfUiT;
@@ -19,9 +20,17 @@ namespace QmDreamer.UI
         private UnitPosition unitPosition;
         private int type = 0;
         private Transform originParet;
-       
+        private Obstacles obstacles;
+        private Transform onBeginParent;
+        private Vector3 originScale;
+        protected override void Awake()
+        {
+            onBeginParent = transform.Find("/Canvas/P_ArrowParent");
+            originScale = transform.localScale;
+        }
         protected override void Start()
         {
+            obstacles = new Obstacles();
             base.Start();
             goParent = transform.parent;
            
@@ -36,6 +45,19 @@ namespace QmDreamer.UI
 
         }
 
+        public override void OnPointerEnter(PointerEventData eventData)
+        {
+          
+            MoveController.Instance.FlagOnter(Input.mousePosition, Util.obstacleTip[type]);
+        }
+
+        public override void OnPointerExit(PointerEventData eventData)
+        {
+
+
+            MoveController.Instance.FlagExit();
+        }
+
         public void OnBeginDrag(PointerEventData _)
         {
 
@@ -44,6 +66,7 @@ namespace QmDreamer.UI
                 GameObject newGo = ObjectPool.Instance.CreateObject(transform.name, gameObject, transform.position, transform.parent);
                 // 使生成的名字一致 对象池
                 newGo.name = transform.name;
+                transform.parent = onBeginParent;
             }
 
             beginParentTransform = transform.parent;
@@ -52,7 +75,11 @@ namespace QmDreamer.UI
                 DestroyArrow();
             }
 
-         
+
+            Debug.Log("flagDrag" + transform.localScale);
+            //物体增长1倍
+            Scale(1);
+
         }
 
 
@@ -130,13 +157,15 @@ namespace QmDreamer.UI
 
         private void DestroyArrow()
         {
+            // 这个是回收  回收后 false   重新生成的也会是这样的
+            transform.GetComponent<Image>().raycastTarget = true;
             //初始父类   回收
-            if (transform.parent == originParet)
+            if (transform.parent == onBeginParent)
             {
                 ObjectPool.Instance.CollectObject(gameObject);
             }
             SetPosAndParent(transform, beginParentTransform);
-            transform.GetComponent<Image>().raycastTarget = true;
+           
         }
 
         /// <summary>
@@ -146,6 +175,8 @@ namespace QmDreamer.UI
         /// <param name="mousePosition">鼠标的位置 --停止的位置</param>
         private void  SetObstacle(Transform tran, Vector3 mousePosition)
         {
+            //播放音乐
+            AudioManager.Instance.PlaySound(14);
 
             int index = 0;
             UnitPosition ObstaclePosition = MoveModel.Instance.Fingbyname(tran.name);
@@ -153,9 +184,10 @@ namespace QmDreamer.UI
             index= SetObstaclePostion(tran.name, type, mousePosition, tran);
             // 存储数据
             StoreObstacle(index, ObstaclePosition);
-            // 物体的存储
+            // 障碍物 的物体的存储
             MoveModel.Instance.moveCache.Obstacle.Add(gameObject);
-
+            // 存储指令类型 为了撤退
+            MoveModel.Instance.moveCache.Drog.Add(2);
 
             //触发委托 
 
@@ -224,29 +256,101 @@ namespace QmDreamer.UI
             return index;
         }
 
-
-
+        
+        /// <summary>
+        /// 对障碍物数据进行存储
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="ObstaclePosition"></param>
         public void  StoreObstacle( int index, UnitPosition ObstaclePosition)
         {
             //此名字的位置加上障碍物
             MoveModel.Instance.obstacle.OpObstacle(ObstaclePosition.Go.name, index, 1);
+            thisObstacle(ObstaclePosition.Go.name, index, 0);
             // 得到index对应的name
             string posName=Tool.Instance.AroundName(ObstaclePosition.Go.name, index);
             if (!MoveModel.mapData.ContainsKey(posName))
             {
-                //对应的index操作得到得到Pos 越界了 
+                //对应的index操作得到的Pos 越界了   不存在
                 return;
             }
             MoveModel.Instance.obstacle.OpObstacle(posName, Util.obstacleDirt[index], 1);
-
-
-
-
-
+            thisObstacle(posName, Util.obstacleDirt[index], 1);
         }
 
 
+        /// <summary>
+        /// 存储此障碍物的在数据存储中的位置
+        /// </summary>
+        /// <param name="name">数据存储中名字</param>
+        /// <param name="index">数据存储中下标</param>
+        /// <param name="index1">对应的 0-第一个 1-第二个</param>
+        public void thisObstacle(string name,int index,int index1)
+        {
+            ObstacleStore obstacleStore = new ObstacleStore(name, index);
+            obstacles.Obstacle[index1]= obstacleStore;
+
+        }
+        /// <summary>
+        ///  销毁相应的障碍物的数据
+        /// </summary>
+        public  void DestroyData()
+        {
+            // 让对应的障碍物的数据归0
+            foreach(ObstacleStore item in obstacles.Obstacle)
+            {
+                if (item == null) return;
+                MoveModel.Instance.obstacle.OpObstacle(item.Name, item.Index, 0);
+            }
+        }
+        /// <summary>
+        /// 销毁这个障碍物
+        /// </summary>
+        public void GoDestroy()
+        {
+            // 销毁数据
+            DestroyData();
+            //恢复到原来的样子
+            Scale(0);
+            // 回收此物体
+            ObjectPool.Instance.CollectObject(gameObject);
+        }
+        /// <summary>
+        ///   缩放障碍物
+        /// </summary>
+        /// <param name="index"> 0：缩 1：放</param>
+        public void Scale( int index)
+        {
+          if(type==0)
+            {
+                if (index == 0)
+                {
+                    transform.DOScale(originScale, 2);
+                }
+                else
+                {
+                    transform.DOScale(originScale + new Vector3(0, originScale.y, 0), 2);
+                }
+            }
+
+            else
+            {
+                if (index == 0)
+                {
+                    transform.DOScale(originScale, 2);
+                }
+                else
+                {
+                    transform.DOScale(originScale + new Vector3(originScale.x, 0, 0), 2);
+                }
+            }
+
+        }
+
     }
+
+
+
 
 
 }

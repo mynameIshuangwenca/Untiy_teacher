@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace QmDreamer.UI
 {
-    public class ArrowDrog : Button, IDragHandler, IBeginDragHandler, IEndDragHandler
+    public class ArrowDrog : Button, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
     {
         private Transform beginParentTransform; //记录开始拖动时的父级对象  
         private Transform topOfUiT;
@@ -15,36 +15,41 @@ namespace QmDreamer.UI
         private Transform goParent;
         private UnitPosition unitPosition;
         private int dirtion = 0;
-        private Transform originParet;
+       
+        private Transform onBeginParent;
         //声明委托
         public static Action<EndDrogMess> ArrowEndDrog;
+        protected override void Awake()
+        {
+            onBeginParent = transform.Find("/Canvas/P_ArrowParent");
+        }
         protected override void Start()
         {
             base.Start();
             goParent = transform.parent;
             dirtion = Util.arrowDirt[transform.name];
-            originParet = transform.parent;
+           
            
 
         }
+        public override void OnPointerEnter(PointerEventData eventData)
+        {
+            MoveController.Instance.FlagOnter(Input.mousePosition, Util.arrowTip[dirtion]);
+        }
 
+        public override void OnPointerExit(PointerEventData eventData)
+        {
+            MoveController.Instance.FlagExit();
+        }
         public void OnBeginDrag(PointerEventData _)
         {
-            
-
-
-            //  // 已经选择了player  除了player 其他的都不能拖动了
-            //if(MoveController.Instance.havechosePlayer==1 && transform.parent==originParet)
-            // {
-            //     return;
-            // }
-            //  if (transform.parent == topOfUiT) return;
 
             if (transform.parent == goParent)
             {
                GameObject newGo= ObjectPool.Instance.CreateObject(transform.name, gameObject, transform.position, transform.parent);
                 // 使生成的名字一致 对象池
                 newGo.name = transform.name;
+                transform.parent = onBeginParent;
             }
            
             beginParentTransform = transform.parent;
@@ -52,11 +57,8 @@ namespace QmDreamer.UI
             {
                 DestroyArrow();
             }
+            
 
-            // 移动就可以复制一个
-
-
-            //  transform.SetParent(topOfUiT);
         }
 
 
@@ -77,6 +79,7 @@ namespace QmDreamer.UI
             {
                 SetPosAndParent(transform, beginParentTransform);
                 transform.GetComponent<Image>().raycastTarget = true;
+                ObjectPool.Instance.CollectObject(gameObject);
                 return;
             }
             if (go.tag == "Position") //如果当前拖动物体下是：格子 -（没有物品）时
@@ -139,16 +142,9 @@ namespace QmDreamer.UI
 
 
         private void DestroyArrow()
-        {
-            if (transform.parent == originParet)
-            {
+        {        
                 ObjectPool.Instance.CollectObject(gameObject);
-            }
-            SetPosAndParent(transform, beginParentTransform);
-            transform.GetComponent<Image>().raycastTarget = true;
         }
-
-
         private void ArrowWalk(Transform tran)
         {
             SetPosAndParent(transform, tran);
@@ -162,12 +158,17 @@ namespace QmDreamer.UI
             //ArrowEndDrog(endDrogMess);
             EndDrog( endDrogMess);
             ObjectPool.Instance.CollectObject(gameObject);
+            //播放音乐
+            AudioManager.Instance.PlaySound(14);
 
+            // 存储指令类型 为了撤退
+            MoveModel.Instance.moveCache.Drog.Add(0);
         }
 
         // 代替委托
         private void EndDrog(EndDrogMess endDrogMess)
         {
+
             if (MoveController.Instance.ArrowEndDrog(endDrogMess))
             {
                 MoveView.Instance.ArrowEndDrog(endDrogMess);

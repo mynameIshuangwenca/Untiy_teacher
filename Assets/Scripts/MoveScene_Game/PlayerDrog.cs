@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
+using DG.Tweening;
 namespace QmDreamer.UI
 {
     public class PlayerDrog : Button, IDragHandler, IBeginDragHandler, IEndDragHandler
@@ -18,6 +18,8 @@ namespace QmDreamer.UI
         private Transform originParet;
         //声明委托
         public static Action<EndDrogMess> EndDrog ;
+
+       
         protected override void Start()
         {
             base.Start();
@@ -30,14 +32,6 @@ namespace QmDreamer.UI
         public void OnBeginDrag(PointerEventData _)
         {
 
-            
-           //  // 已经选择了player  除了player 其他的都不能拖动了
-           //if(MoveController.Instance.havechosePlayer==1 && transform.parent==originParet)
-           // {
-           //     return;
-           // }
-          //  if (transform.parent == topOfUiT) return;
-
             if (transform.parent == goParent)
             {
                GameObject newgo= ObjectPool.Instance.CreateObject(transform.name, gameObject, transform.position, transform.parent);
@@ -47,9 +41,9 @@ namespace QmDreamer.UI
 
             beginParentTransform = transform.parent;
             // 移动就可以复制一个
+            
 
-
-          //  transform.SetParent(topOfUiT);
+            //  transform.SetParent(topOfUiT);
         }
 
 
@@ -70,6 +64,8 @@ namespace QmDreamer.UI
             {
                 SetPosAndParent(transform, beginParentTransform);
                 transform.GetComponent<Image>().raycastTarget = true;
+                ObjectPool.Instance.CollectObject(gameObject);
+               
                 return;
             }
             if (go.tag == "Position") //如果当前拖动物体下是：格子 -（没有物品）时
@@ -124,12 +120,16 @@ namespace QmDreamer.UI
 
         private void PlayEndDrog(EndDrogMess endDrogMess)
         {
+            //播放音乐
+            AudioManager.Instance.PlaySound(14);
             MoveController.Instance.EndDrog(endDrogMess);
             MoveView.Instance.EndDrog(endDrogMess);
 
         }
 
 
+
+      
 
 
 

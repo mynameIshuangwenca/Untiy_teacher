@@ -75,10 +75,17 @@
     <Compile Include="Assets\Scripts\CourseScene\CourseMap.cs" />
     <Compile Include="Assets\Scripts\data\GameData.cs" />
     <Compile Include="Assets\Scripts\data\LevelList.cs" />
+    <Compile Include="Assets\Scripts\data\UserInfo.cs" />
+    <Compile Include="Assets\Scripts\DB\SQLController.cs" />
+    <Compile Include="Assets\Scripts\DB\SQLiteHelper.cs" />
     <Compile Include="Assets\Scripts\GameScenescript\GameManager.cs" />
     <Compile Include="Assets\Scripts\GameScenescript\GameView.cs" />
     <Compile Include="Assets\Scripts\GameScenescript\MapMamager.cs" />
+    <Compile Include="Assets\Scripts\GameScenescript\SQLiteDemo.cs" />
+    <Compile Include="Assets\Scripts\LoginAndRegiter\Login.cs" />
+    <Compile Include="Assets\Scripts\LoginAndRegiter\Register.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\ArrowDrog.cs" />
+    <Compile Include="Assets\Scripts\MoveScene_Game\FlagDrog.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\MoveController.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\MoveData.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\MoveModel.cs" />
@@ -87,6 +94,7 @@
     <Compile Include="Assets\Scripts\MoveScene_Game\ObstacleManager.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\PlayerDrog.cs" />
     <Compile Include="Assets\Scripts\MoveScene_Game\TeachMapManager.cs" />
+    <Compile Include="Assets\Scripts\MoveScene_Game\TimerManager.cs" />
     <Compile Include="Assets\Scripts\Poolmanager\MonoSingleton.cs" />
     <Compile Include="Assets\Scripts\Poolmanager\ObjectPool.cs" />
     <Compile Include="Assets\Scripts\Poolmanager\Singleton.cs" />
@@ -95,6 +103,7 @@
     <Compile Include="Assets\Scripts\Utils\ChinarDragSwapImage.cs" />
     <Compile Include="Assets\Scripts\Utils\DragDirt.cs" />
     <Compile Include="Assets\Scripts\Utils\Tool.cs" />
+    <Compile Include="Assets\Scripts\Utils\TooltipUI.cs" />
     <Compile Include="Assets\Scripts\Utils\Util.cs" />
     <None Include="Assets\Demigiant\DOTween\readme.txt" />
     <Reference Include="Unity.Timeline.Editor">
@@ -303,6 +312,15 @@
     </Reference>
     <Reference Include="DOTween">
       <HintPath>F:/GitResource/Unity/teachertest/Assets/Demigiant/DOTween/DOTween.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data">
+      <HintPath>F:/GitResource/Unity/teachertest/Assets/Plugins/Mono.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>F:/GitResource/Unity/teachertest/Assets/Plugins/Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data">
+      <HintPath>F:/GitResource/Unity/teachertest/Assets/Plugins/System.Data.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.9f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>

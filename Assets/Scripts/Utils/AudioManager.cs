@@ -4,20 +4,27 @@ using System.Collections.Generic;
 using DG.Tweening;
 using System;
 
-public class AudioManager : MonoSingleton<AudioManager>
+public class AudioManager : MonoBehaviour
 {
-   
+    private static AudioManager instance;
 
-   
+    public static AudioManager Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
 
     private Dictionary<int, string> audioPathDict;      // 存放音频文件路径
 
     private AudioSource musicAudioSource;
-    private AudioSource soundAudioSource;
 
-   
+    private List<AudioSource> unusedSoundAudioSourceList;   // 存放可以使用的音频组件
 
-    private Dictionary<int, AudioClip> audioClipDict ;       // 缓存音频文件
+    private List<AudioSource> usedSoundAudioSourceList;     // 存放正在使用的音频组件
+
+    private Dictionary<int, AudioClip> audioClipDict;       // 缓存音频文件
 
     private float musicVolume = 1;
 
@@ -27,43 +34,27 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     private string soundVolumePrefs = "SoundVolume";
 
-    
+    private int poolCount = 3;         // 对象池数量
 
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
-        
+        instance = this;
 
         audioPathDict = new Dictionary<int, string>()       // 这里设置音频文件路径。需要修改。 TODO
         {
-            //{ 1, "Music/Background" },
+            { 1, "Music/RunBackGound" },
             //{ 2, "Music/BattleScene" },
             { 11, "Music/Error01"},
             { 12, "Music/Win"},
-           
+            { 13, "Music/Back"},
+            { 14, "Music/OrderDown"},
         };
 
         musicAudioSource = gameObject.AddComponent<AudioSource>();
-        soundAudioSource = gameObject.AddComponent<AudioSource>();
-        
+        unusedSoundAudioSourceList = new List<AudioSource>();
+        usedSoundAudioSourceList = new List<AudioSource>();
         audioClipDict = new Dictionary<int, AudioClip>();
-       
-       
-        // 先加载
-        foreach (var item in audioPathDict)
-        {
-
-            if (!audioClipDict.ContainsKey(item.Key))
-            {
-                AudioClip ac = Resources.Load(audioPathDict[item.Key]) as AudioClip;
-                if(ac)
-                {
-                    audioClipDict.Add(item.Key, ac);
-                }
-               
-            }
-        }
-
     }
 
     void Start()
@@ -75,7 +66,7 @@ public class AudioManager : MonoSingleton<AudioManager>
         }
         if (PlayerPrefs.HasKey(soundVolumePrefs))
         {
-            soundVolume = PlayerPrefs.GetFloat(soundVolumePrefs);
+            musicVolume = PlayerPrefs.GetFloat(soundVolumePrefs);
         }
     }
 
@@ -87,16 +78,56 @@ public class AudioManager : MonoSingleton<AudioManager>
     public void PlayMusic(int id, bool loop = true)
     {
         // 通过Tween将声音淡入淡出
-        DOTween.To(() => musicAudioSource.volume, value => musicAudioSource.volume = value, 0, 0.5f).OnComplete(() =>
+        DOTween.To(() => musicAudioSource.volume, value => musicAudioSource.volume = value, 0, 0.1f).OnComplete(() =>
         {
-            musicAudioSource.clip = audioClipDict[id];
+            musicAudioSource.clip = GetAudioClip(id);
             musicAudioSource.clip.LoadAudioData();
             musicAudioSource.loop = loop;
             musicAudioSource.volume = musicVolume;
             musicAudioSource.Play();
-            DOTween.To(() => musicAudioSource.volume, value => musicAudioSource.volume = value, musicVolume, 0.5f);
+            DOTween.To(() => musicAudioSource.volume, value => musicAudioSource.volume = value, musicVolume, 1.5f);
         });
     }
+    public void StopMusic()
+    {
+        if (musicAudioSource.isPlaying)
+
+        {
+            //关闭音乐
+            DOTween.To(() => musicAudioSource.volume, value => musicAudioSource.volume = value, 0, 1.5f).OnComplete(
+                () => { musicAudioSource.Stop(); }
+
+                );
+
+        }
+    }
+    /// <summary>
+    /// 暂停音乐
+    /// </summary>
+    public void PauseMusic()
+    {
+        if (musicAudioSource.isPlaying)
+
+        {
+
+            //暂停音乐
+
+            //这里说一下音乐暂停以后
+
+            //点击播放音乐为继续播放
+
+            //而停止以后在点击播放音乐
+
+            //则为从新播放
+
+            //这就是暂停与停止的区别
+
+            musicAudioSource.Pause();
+
+        }
+
+    }
+
 
     /// <summary>
     /// 播放音效
@@ -104,12 +135,28 @@ public class AudioManager : MonoSingleton<AudioManager>
     /// <param name="id"></param>
     public void PlaySound(int id, Action action = null)
     {
-            soundAudioSource.clip = audioClipDict[id];
-            soundAudioSource.clip.LoadAudioData();
-            soundAudioSource.Play();
-           // StartCoroutine(WaitPlayEnd(soundAudioSource, action));
-        
-        
+        if (unusedSoundAudioSourceList.Count != 0)
+        {
+            AudioSource audioSource = UnusedToUsed();
+            audioSource.clip = GetAudioClip(id);
+            audioSource.clip.LoadAudioData();
+            audioSource.Play();
+
+            StartCoroutine(WaitPlayEnd(audioSource, action));
+        }
+        else
+        {
+            AddAudioSource();
+
+            AudioSource audioSource = UnusedToUsed();
+            audioSource.clip = GetAudioClip(id);
+            audioSource.clip.LoadAudioData();
+            audioSource.volume = soundVolume;
+            audioSource.loop = false;
+            audioSource.Play();
+
+            StartCoroutine(WaitPlayEnd(audioSource, action));
+        }
     }
 
     /// <summary>
@@ -131,7 +178,7 @@ public class AudioManager : MonoSingleton<AudioManager>
     IEnumerator WaitPlayEnd(AudioSource audioSource, Action action)
     {
         yield return new WaitUntil(() => { return !audioSource.isPlaying; });
-       //xxx
+        UsedToUnused(audioSource);
         if (action != null)
         {
             action();
@@ -155,11 +202,55 @@ public class AudioManager : MonoSingleton<AudioManager>
         return audioClipDict[id];
     }
 
-   
+    /// <summary>
+    /// 添加音频组件
+    /// </summary>
+    /// <returns></returns>
+    private AudioSource AddAudioSource()
+    {
+        if (unusedSoundAudioSourceList.Count != 0)
+        {
+            return UnusedToUsed();
+        }
+        else
+        {
+            AudioSource audioSource = gameObject.AddComponent<AudioSource>();
+            unusedSoundAudioSourceList.Add(audioSource);
+            return audioSource;
+        }
+    }
 
-  
+    /// <summary>
+    /// 将未使用的音频组件移至已使用集合里
+    /// </summary>
+    /// <returns></returns>
+    private AudioSource UnusedToUsed()
+    {
+        AudioSource audioSource = unusedSoundAudioSourceList[0];
+        unusedSoundAudioSourceList.RemoveAt(0);
+        usedSoundAudioSourceList.Add(audioSource);
+        return audioSource;
+    }
 
-   
+    /// <summary>
+    /// 将使用完的音频组件移至未使用集合里
+    /// </summary>
+    /// <param name="audioSource"></param>
+    private void UsedToUnused(AudioSource audioSource)
+    {
+        if (usedSoundAudioSourceList.Contains(audioSource))
+        {
+            usedSoundAudioSourceList.Remove(audioSource);
+        }
+        if (unusedSoundAudioSourceList.Count >= poolCount)
+        {
+            Destroy(audioSource);
+        }
+        else if (audioSource != null && !unusedSoundAudioSourceList.Contains(audioSource))
+        {
+            unusedSoundAudioSourceList.Add(audioSource);
+        }
+    }
 
     /// <summary>
     /// 修改背景音乐音量
@@ -180,33 +271,15 @@ public class AudioManager : MonoSingleton<AudioManager>
     public void ChangeSoundVolume(float volume)
     {
         soundVolume = volume;
-        soundAudioSource.volume = volume;      
+        for (int i = 0; i < unusedSoundAudioSourceList.Count; i++)
+        {
+            unusedSoundAudioSourceList[i].volume = volume;
+        }
+        for (int i = 0; i < usedSoundAudioSourceList.Count; i++)
+        {
+            usedSoundAudioSourceList[i].volume = volume;
+        }
+
         PlayerPrefs.SetFloat(soundVolumePrefs, volume);
     }
 }
-
-
-
-/*
- 
-     使用
-     using UnityEngine;
-using System.Collections;
- 
-public class NewBehaviourScript : MonoBehaviour {
- 
-    // Use this for initialization
-    void Start () {
-        AudioManager.Instance.PlayMusic( 1 );
-        AudioManager.Instance.PlaySound( 11, OnSoundPlayEnd );
- 
-        AudioManager.Instance.ChangeMusicVolume( 0.5f );
-        AudioManager.Instance.ChangeSoundVolume( 0.5f );
-    }
- 
-    void OnSoundPlayEnd()
-    {
-        Debug.Log( "音效播放完了" );
-    }
-}
-     */

@@ -5,16 +5,16 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
-public enum GameState
-{
-    prepartion,
-    start,
-    pressing,// 按钮增加路线状态
-    Walking,//人物走动状态
-    Destination,// 到达终点的状态
-    AnimationFlag,
-    Fail,// 路劲走完了但是没有成功
-}
+//public enum GameState
+//{
+//    prepartion,
+//    start,
+//    pressing,// 按钮增加路线状态
+//    Walking,//人物走动状态
+//    Destination,// 到达终点的状态
+//    AnimationFlag,
+//    Fail,// 路劲走完了但是没有成功
+//}
 
 [Serializable]
 public class UnitPosition

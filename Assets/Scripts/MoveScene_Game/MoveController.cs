@@ -33,6 +33,9 @@ public class MoveController : MonoSingleton<MoveController>
 
     [HideInInspector]
     public GameObject player;
+
+
+    public GameObject tooltipUI;
   
 
     public EndDrogMess VirtualMess { get => virtualMess; set => virtualMess = value; }
@@ -45,7 +48,8 @@ public class MoveController : MonoSingleton<MoveController>
         //ArrowDrog.ArrowEndDrog += ArrowEndDrog;
         gameState = GameState.prepartion;
         InitGame();
-       
+    
+
 
     }
     // Start is called before the first frame update
@@ -60,6 +64,8 @@ public class MoveController : MonoSingleton<MoveController>
        
     }
 
+
+   
     private void InitGame()
     {  
 
@@ -474,6 +480,8 @@ public class MoveController : MonoSingleton<MoveController>
                
             }
 
+            ReduceOrder();
+
 
         }
 
@@ -495,6 +503,11 @@ public class MoveController : MonoSingleton<MoveController>
         MoveView.Instance.SetRestartBtn(false);
 
         gameState = GameState.Walking;
+        if(MoveModel.Instance.orderData.Order.Count!=0)
+        {
+            AudioManager.Instance.PlayMusic(1);
+        }
+       
 
        
     }
@@ -531,12 +544,17 @@ public class MoveController : MonoSingleton<MoveController>
         }
         MoveModel.Instance.CleanOrder();
         MoveModel.Instance.FadeArrow(false);
+        //关闭音乐
+        AudioManager.Instance.StopMusic();
 
+    }
 
-
-
-
-
+   /// <summary>
+   ///  player 走后从后面减少箭头指令  为了 后退功能
+   /// </summary>
+    public void ReduceOrder()
+    {
+        MoveModel.Instance.moveCache.RedureLastOrderInFlag();
     }
 
 
@@ -557,12 +575,35 @@ public class MoveController : MonoSingleton<MoveController>
     /// <summary>
     /// 后退一步
     /// </summary>
-    public void BackWalk()
+    public void BackWalk(int index=0)
+    {
+        
+       if (index ==0)
+        {
+            OrderBack();
+        }
+        else if (index==1)
+        {
+            FlagBack();
+        }
+       else if (index ==2)
+        {
+            ObstacleBack();
+        }
+       else
+        {
+
+        }
+      
+    }
+
+    // 指令后退
+     public void  OrderBack()
     {
         int index = MoveModel.Instance.orderData.Order.Count;
         if (index <= 0) return;// 没有走动
         // 错误的步骤  
-        if(MoveModel.Instance.orderData.Route[index - 1]==null)
+        if (MoveModel.Instance.orderData.Route[index - 1] == null)
         {
             // 2 数据的后退
             MoveModel.Instance.orderData.BackWalk();
@@ -570,9 +611,9 @@ public class MoveController : MonoSingleton<MoveController>
         }
 
         //1 、 动作退回
-        if (MoveModel.Instance.orderData.Order[index-1] == 0 || MoveModel.Instance.orderData.Order[index-1] == 1)
+        if (MoveModel.Instance.orderData.Order[index - 1] == 0 || MoveModel.Instance.orderData.Order[index - 1] == 1)
         {// 后退到 倒数第二步
-            if (index==1)
+            if (index == 1)
             {
                 // 只要一步 回到player位置
 
@@ -582,10 +623,10 @@ public class MoveController : MonoSingleton<MoveController>
             {
                 virtualPlayer.transform.position = MoveModel.Instance.orderData.Route[index - 2].Center;
             }
-            
+
         }
-            
-        else if (MoveModel.Instance.orderData.Order[index-1] == 2)
+
+        else if (MoveModel.Instance.orderData.Order[index - 1] == 2)
         {// 向左转了
             VTurnRight();
         }
@@ -594,7 +635,7 @@ public class MoveController : MonoSingleton<MoveController>
             VTurnLeft();
         }
         // 4 vitural 的位置后退
-        if(index ==1)
+        if (index == 1)
         {
             virtualMess.Dirt = originDirt;
         }
@@ -611,15 +652,59 @@ public class MoveController : MonoSingleton<MoveController>
         // 3 箭头的后退
         MoveModel.Instance.moveCache.BackWalk();
 
-      
     }
 
+    //旗子后退
+    public void FlagBack()
+    {
+        int index = MoveModel.Instance.moveCache.Flag.Count;
+        if (index <= 0) return;
+        //1、 controller上的恢复
+        GameObject go = MoveModel.Instance.moveCache.Flag[index - 1];
+        MoveView.Instance.FadeFlag(Util.flagType[go.name], true);
+
+            //2、map上的物体去掉
+        MoveModel.Instance.moveCache.Flag.RemoveAt(index - 1);
+        // 回收 
+        ObjectPool.Instance.CollectObject(go);
+        
+    }
+
+
+
+    public void  ObstacleBack()
+    {
+        int index = MoveModel.Instance.moveCache.Obstacle.Count;
+        if (index <= 0) return;
+
+        // 障碍物的数据清除
+        GameObject go = MoveModel.Instance.moveCache.Obstacle[index - 1];
+        MoveModel.Instance.moveCache.Obstacle.RemoveAt(index - 1);
+
+        // 销毁此物体
+        go.GetComponent<ObstacleDrog>().GoDestroy();
+
+
+
+      
+    }
 
     public void OutIndex()
     {
         //提示和播放音乐
         Debug.Log("越界了");
         AudioManager.Instance.PlaySound(11);
+    }
+
+
+    public void  FlagOnter(Vector3 postion ,string mess)
+    {
+        tooltipUI.GetComponent<TooltipUI>().Show(postion, mess);
+    }
+
+    public void FlagExit()
+    {
+        tooltipUI.GetComponent<TooltipUI>().Hide();
     }
 
 }

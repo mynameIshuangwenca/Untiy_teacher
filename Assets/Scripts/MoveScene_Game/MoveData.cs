@@ -9,7 +9,9 @@ namespace Move {
 
     }
 
-
+    /// <summary>
+    /// 缓存的数据如在Map上的player virtualPlayer 箭头 障碍物 和route上的箭头
+    /// </summary>
     public class MoveCache
     {
         private GameObject player;
@@ -17,12 +19,17 @@ namespace Move {
         private List<GameObject> arrowMap;
         private List<GameObject> arrowRoute;
         private List<GameObject> obstacle;
+        private List<GameObject> flag;
+        //拖动物体的指令  为了后撤指令
+        private List<int> drog;
 
         public MoveCache()
         {
             ArrowMap = new List<GameObject>();
             ArrowRoute = new List<GameObject>();
             Obstacle = new List<GameObject>();
+            Flag = new List<GameObject>();
+            Drog = new List<int>();
         }
 
         public GameObject Player { get => player; set => player = value; }
@@ -30,6 +37,16 @@ namespace Move {
         public List<GameObject> ArrowMap { get => arrowMap; set => arrowMap = value; }
         public List<GameObject> ArrowRoute { get => arrowRoute; set => arrowRoute = value; }
         public List<GameObject> Obstacle { get => obstacle; set => obstacle = value; }
+        public List<GameObject> Flag { get => flag; set => flag = value; }
+        
+        public List<int> Drog { get => drog; set => drog = value; }
+
+
+        private void CleanDrog()
+        {
+            Drog.Clear();
+        }
+
 
         /// <summary>
         ///  清除player
@@ -81,6 +98,16 @@ namespace Move {
             }
             obstacle.Clear();
         }
+
+
+        private void CleanFlag()
+        {
+            foreach (GameObject obj in flag)
+            {
+                ObjectPool.Instance.CollectObject(obj);
+            }
+            flag.Clear();
+        }
         /// <summary>
         ///  对缓存进行清除
         /// </summary>
@@ -93,6 +120,9 @@ namespace Move {
             CleanArrowMap();
             CleanArrowRoute();
             Cleanobstacle();
+
+            CleanFlag();
+            CleanDrog();
 
         }
        /// <summary>
@@ -131,7 +161,7 @@ namespace Move {
         }
 
 
-
+        // 后退一步的工作
         public void BackWalk()
         {
             ObjectPool.Instance.CollectObject(arrowMap[arrowMap.Count - 1]);
@@ -139,6 +169,28 @@ namespace Move {
             arrowMap.RemoveAt(arrowMap.Count - 1);
             arrowRoute.RemoveAt(arrowRoute.Count - 1);
 
+        }
+
+
+        /// <summary>
+        /// 从拖动的的指令中 从后面减少箭头指令的
+        /// </summary>
+        /// <returns> 是否成功</returns>
+        public bool RedureLastOrderInFlag()
+        {
+            bool flag = false;
+            int index = drog.Count;
+             for(int i =index-1;i>=0;i--)
+            {
+                //是指令
+                if(drog[i]==0)
+                {
+                    drog.RemoveAt(i);
+                    flag = true;
+                    break;
+                }
+            }
+            return flag;
         }
     }
 
@@ -184,6 +236,43 @@ namespace Move {
             order.RemoveAt(order.Count - 1);
         }
 
+    }
+
+
+    
+    public class ObstacleStore
+    {
+        private string name;
+        private int index;
+
+        public ObstacleStore()
+        {
+        }
+
+        public ObstacleStore(string name, int index)
+        {
+            this.name = name;
+            this.index = index;
+        }
+
+        public string Name { get => name; set => name = value; }
+        public int Index { get => index; set => index = value; }
+    }
+
+    /// <summary>
+    ///  存储相应的障碍物的位置
+    /// </summary>
+    public class Obstacles
+    {
+        private ObstacleStore[] obstacle;
+
+        public Obstacles()
+        {
+            // 只用两个就好了
+            obstacle = new ObstacleStore[2];
+        }
+
+        public ObstacleStore[] Obstacle { get => obstacle; set => obstacle = value; }
     }
 
 }

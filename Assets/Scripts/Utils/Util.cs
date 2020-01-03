@@ -7,7 +7,9 @@ public class Util : MonoSingleton<Util>
     private const string couseListScene = "CouseListSene";
     private const string gameScene = "GameScene";
     private const string moveScene = "MoveScene";
-    private const string showCourseScene = "ShowCourseSence";
+    public  const  string showCourseScene = "ShowCourseSence";
+    private const string loginScene = "LoginScene";
+    private const string registerScene = "RegisterScene";
 
     private const string levelData = "LevelData.json";
 
@@ -20,6 +22,10 @@ public class Util : MonoSingleton<Util>
     public static string MoveScene => moveScene;
 
     public static string ShowCourseScene => showCourseScene;
+
+    public static string LoginScene => loginScene;
+
+    public static string RegisterScene => registerScene;
 
     public static List<DirtionMess> dirtion = new List<DirtionMess> { new DirtionMess("Up", 2, 5), new DirtionMess("Down", 4, 7), new DirtionMess("Left", 3, 6), new DirtionMess("Right", 1, 8) };
     public static List<List<int>>dirtToPos =new List<List<int>>{
@@ -41,6 +47,10 @@ public class Util : MonoSingleton<Util>
         {"ObstacleUp",0 }, {"ObstacleLeft",1 }
     };
 
+    public static Dictionary<string, int> flagType = new Dictionary<string, int> {
+     {"Start",0 }, {"Desination",1 }, {"Middle",2 }
+    };
+
     public static int[] obstacleDirt = { 1, 0, 3, 2 };
 
 
@@ -48,6 +58,10 @@ public class Util : MonoSingleton<Util>
 
 
     public static int[] virtTD = { 0, 180, 90, 270 };
+
+    public static List<string> flagTip = new List<string> { " 起点 "," 终点 "," 过程 "};
+    public static List<string> obstacleTip = new List<string> {" 竖直障碍物 "," 水平障碍物 " };
+    public static List<string> arrowTip = new List<string> {"向上走","向下走","向左走","向右走" };
 
     //public static Dictionary<int, DirtionMess> dirtion = new Dictionary<int, DirtionMess> { 
     //    { 0, new DirtionMess("Up", 2, 5) }, { 1, new DirtionMess("Down", 4, 7) },

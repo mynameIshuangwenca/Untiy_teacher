@@ -61,19 +61,22 @@ public class Tool : MonoSingleton<Tool>
 
     IEnumerator GetText(string name, Image image)
     {
-        string path =
-#if UNITY_ANDROID && !UNITY_EDITOR
-		Application.streamingAssetsPath; //安卓的Application.streamingAssetsPath已默认有"file://"
-#elif UNITY_IOS && !UNITY_EDITOR
-		"file://" + Application.streamingAssetsPath;
-#elif UNITY_STANDLONE_WIN || UNITY_EDITOR
-        "file://" + Application.streamingAssetsPath;
-#else
-		string.Empty;
-#endif    
+//        string path =
+//#if UNITY_ANDROID && !UNITY_EDITOR
+//		Application.streamingAssetsPath; //安卓的Application.streamingAssetsPath已默认有"file://"
+//#elif UNITY_IOS && !UNITY_EDITOR
+//		"file://" + Application.streamingAssetsPath;
+//#elif UNITY_STANDLONE_WIN || UNITY_EDITOR
+//        "file://" + Application.streamingAssetsPath;
+//#else
+//		string.Empty;
+//#endif
 
-         path =path + name;
-        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(path))
+        var uri = new System.Uri(Path.Combine(Application.streamingAssetsPath, name));
+        var request = UnityWebRequest.Get(uri.AbsoluteUri);
+
+       // path =path + name;
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(uri.AbsoluteUri))
         {
             yield return uwr.SendWebRequest();
 
@@ -240,6 +243,17 @@ public class Tool : MonoSingleton<Tool>
         }
 
        
+    }
+
+    /// <summary>
+    /// 物体变淡和恢复 + 能否操作
+    /// </summary>
+    /// <param name="img"></param>
+    /// <param name="flag"></param>
+    public void FadeAndX(Image img, bool flag)
+    {
+        Fade(img, flag);
+        img.raycastTarget = flag;
     }
 
 

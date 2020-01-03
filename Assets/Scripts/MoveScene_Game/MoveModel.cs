@@ -32,12 +32,14 @@ public class MoveModel : MonoSingleton<MoveModel>
     // 障碍物的位置的存储
     public  Obstacle obstacle ;
 
+    // 在controller位置 旗子的存储
+    public GameObject[] flag;
     private void Awake()
     {
         //  mapData = new Dictionary<string, UnitPosition>();
         obstacle = new Obstacle();
 
-
+        flag = new GameObject[3];
     }
 
 
