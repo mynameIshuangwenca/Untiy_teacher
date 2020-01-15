@@ -8,24 +8,32 @@ namespace Move
 
 
     }
+    public enum ObstacleState
+    {
+        Nothing,//什么都没有
+        Obstacle,//有障碍物
+        Wall,// 有墙
+        NoName,//没有此名字的cell
+        Cell//障碍物时在cell位置上
 
+    }
     public class Obstacle
     {
         private Dictionary<string, List<int>> obstacle;
         private int DirtNum=4;
-
+        private int CellObstacle = 4;// 块状障碍物
         public Obstacle()
         {
             obstacle = new Dictionary<string, List<int>>
             {
-              {  "Img_Map_0_0",new List<int>{0,0,0,0}}, {  "Img_Map_0_1",new List<int>{0,0,0,0}},
-              {  "Img_Map_0_2",new List<int>{0,0,0,0}}, {  "Img_Map_0_3",new List<int>{0,0,0,0}},
-              {  "Img_Map_1_0",new List<int>{0,0,0,0}}, {  "Img_Map_1_1",new List<int>{0,0,0,0}},
-              {  "Img_Map_1_2",new List<int>{0,0,0,0}}, {  "Img_Map_1_3",new List<int>{0,0,0,0}},
-              {  "Img_Map_2_0",new List<int>{0,0,0,0}}, {  "Img_Map_2_1",new List<int>{0,0,0,0}},
-              {  "Img_Map_2_2",new List<int>{0,0,0,0}}, {  "Img_Map_2_3",new List<int>{0,0,0,0}},
-              {  "Img_Map_3_0",new List<int>{0,0,0,0}}, {  "Img_Map_3_1",new List<int>{0,0,0,0}},
-              {  "Img_Map_3_2",new List<int>{0,0,0,0}}, {  "Img_Map_3_3",new List<int>{0,0,0,0}},
+              {  "Img_Map_0_0",new List<int>{0,0,0,0,0}}, {  "Img_Map_0_1",new List<int>{0,0,0,0,0}},
+              {  "Img_Map_0_2",new List<int>{0,0,0,0,0}}, {  "Img_Map_0_3",new List<int>{0,0,0,0,0}},
+              {  "Img_Map_1_0",new List<int>{0,0,0,0,0}}, {  "Img_Map_1_1",new List<int>{0,0,0,0,0}},
+              {  "Img_Map_1_2",new List<int>{0,0,0,0,0}}, {  "Img_Map_1_3",new List<int>{0,0,0,0,0}},
+              {  "Img_Map_2_0",new List<int>{0,0,0,0,0}}, {  "Img_Map_2_1",new List<int>{0,0,0,0,0}},
+              {  "Img_Map_2_2",new List<int>{0,0,0,0,0}}, {  "Img_Map_2_3",new List<int>{0,0,0,0,0}},
+              {  "Img_Map_3_0",new List<int>{0,0,0,0,0}}, {  "Img_Map_3_1",new List<int>{0,0,0,0,0}},
+              {  "Img_Map_3_2",new List<int>{0,0,0,0,0}}, {  "Img_Map_3_3",new List<int>{0,0,0,0,0}},
 
             } ;
 
@@ -35,18 +43,51 @@ namespace Move
         /// </summary>
         /// <param name="name"> mapPos的名字</param>
         /// <param name="dirt">位置  0-3 代表 上下左右</param>
-        /// <returns> 0:没有障碍物 1：有障碍物 2 ： 墙  3：没有此name</returns>
+        /// <returns> 0:没有障碍物 1：有障碍物 2 ： 墙  4：没有此name 3：下一步会有cell的障碍物</returns>
         public int  QuaryObstacle(string name ,int dirt )
         {
             // 如果没有存在这个name 
-            int value = 3;
+            int value = 4;
+            ObstacleState obstacleState = IsObstacleofNext(name, dirt);
+            if (obstacleState!= ObstacleState.Nothing)
+            {
+                return 1; // 有障碍
+            }
            if (obstacle.ContainsKey(name) && dirt < DirtNum)// 防止溢出
             {
                 value = obstacle[name][dirt];
             }
+
+           
             return value;
 
         }
+        /// <summary>
+        /// 下一步是否为cell 障碍
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="dirt"></param>
+        /// <returns> ObstacleState.Nothing 则表示没有</returns>
+        public ObstacleState IsObstacleofNext(string name, int dirt)
+        {
+            // 得到index对应的name
+            string posName = Tool.Instance.AroundName(name, dirt);
+            if (!MoveModel.mapData.ContainsKey(posName))
+            {
+                //对应的index操作得到的Pos 越界了   不存在
+                return ObstacleState.Wall;
+            }
+             if (obstacle[posName][CellObstacle]==0)
+            {
+                return ObstacleState.Nothing;
+            }
+            else
+            {
+                return ObstacleState.Cell;
+            }
+          
+        }
+
         /// <summary>
         /// 增加/删除 障碍物
         /// </summary>
@@ -68,6 +109,25 @@ namespace Move
 
         }
 
+/// <summary>
+/// 增加/删除 cell障碍物
+/// </summary>
+/// <param name="name"></param>
+/// <param name="value"></param>
+/// <returns></returns>
+        public bool   OpCellObstacle(string name,int value)
+        {
+            if (obstacle.ContainsKey(name))
+            {
+                obstacle[name][CellObstacle] = value;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         //清除数据重新为0
         public void Clean()
         {
@@ -79,6 +139,9 @@ namespace Move
                 }
             }
         }
+
+
+      
 
         ///// <summary>
         /////  // 增加/删除 障碍

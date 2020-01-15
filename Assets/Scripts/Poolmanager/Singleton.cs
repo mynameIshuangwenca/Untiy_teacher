@@ -36,3 +36,15 @@ public abstract class Singleton<T> where T : class, new()
 
     }
 }
+
+/*
+ 使用
+ /// <summary>
+ 2 /// 测试 Singleton
+ 3 /// </summary>
+ 4 public class GameManage : Singleton<GameManage> {
+ 5     public override void Init()
+ 6     {
+ 7         base.Init();
+ 8     }
+     */

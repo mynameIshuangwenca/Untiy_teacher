@@ -1,9 +1,20 @@
 ﻿using Move;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+public enum GameState
+{
+    prepartion,
+    start,
+    pressing,// 按钮增加路线状态
+    Walking,//人物走动状态
+    ArrowHightLight,
+    Destination,// 到达终点的状态
+    AnimationFlag,
+    Fail,// 路劲走完了但是没有成功
+}
 public class MoveModel : MonoSingleton<MoveModel>
 {
     //指令集
@@ -21,6 +32,8 @@ public class MoveModel : MonoSingleton<MoveModel>
    // public List<GameObject> ArrowAndPlayerObj { get => arrowAndPlayerObj; set => arrowAndPlayerObj = value; }
     //此时player的方向角度
     public static float rotate = 0f;
+    //起点 终点 中继点存储
+    public ImportantPosition importantPosition;
 
 
 
@@ -28,19 +41,35 @@ public class MoveModel : MonoSingleton<MoveModel>
     // 数据类
     public MoveCache moveCache= new MoveCache();
     public OrderData orderData = new OrderData();
-
     // 障碍物的位置的存储
     public  Obstacle obstacle ;
-
     // 在controller位置 旗子的存储
-    public GameObject[] flag;
+    private GameObject[] flag;
+
+    [HideInInspector]
+    public string sceneId;
+
+    public GameObject[] Flag { get => flag; set => flag = value; }
+
     private void Awake()
     {
         //  mapData = new Dictionary<string, UnitPosition>();
         obstacle = new Obstacle();
 
-        flag = new GameObject[3];
+        Flag = new GameObject[3];
+        importantPosition = new ImportantPosition();
+        
+        MoveController.Instance.StartPosEnter += StartPosEnter;
     }
+
+    //开始的点
+    private void StartPosEnter(EndDrogMess obj)
+    {
+        orderData.StoreRoute.Insert(0,obj.Position);
+        MoveView.Instance.FadeFlag(3, false);
+
+    }
+
 
 
     // Start is called before the first frame update
@@ -106,7 +135,7 @@ public class MoveModel : MonoSingleton<MoveModel>
 
     public void CleanOrder()
     {
-        orderData.Clean();
+        orderData.CleanCacheOder();
         //order.Clear();
         //route.Clear();
     }
@@ -124,6 +153,8 @@ public class MoveModel : MonoSingleton<MoveModel>
         //route.Clear();
         rotate = 0f;
 
+        // controller 的箭头恢复
+        MoveView.Instance.FadeFlag(4, true);
     }
 
 
@@ -181,6 +212,14 @@ public class MoveModel : MonoSingleton<MoveModel>
         Debug.Log("FadeArrow");
        moveCache. FadeArrowInRoute(flag);
         moveCache.FadeArrowInMap( flag);
+    }
+
+    public void  FlagInControllerIsDorg(bool isDrog)
+    {
+        foreach (GameObject obj in Flag)
+        {
+            obj.GetComponent<Image>().raycastTarget = isDrog;
+        }
     }
 
 

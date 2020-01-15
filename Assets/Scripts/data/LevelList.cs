@@ -10,6 +10,8 @@ public class LevelCfg
     public string title;
     public string mapSprite;// 地图的图片
     public string iconSprite;
+    public string classType;
+    public string spriteType;
 
 }
 

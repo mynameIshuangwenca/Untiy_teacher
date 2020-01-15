@@ -16,7 +16,7 @@ namespace QmDreamer.UI
         private int type = 0;
         private Transform originParet;
         private Transform onBeginParent;
-
+        
         protected override void Awake()
         {
             onBeginParent = transform.Find("/Canvas/P_ArrowParent");
@@ -54,7 +54,7 @@ namespace QmDreamer.UI
                 GameObject  newgo = ObjectPool.Instance.CreateObject(transform.name, gameObject, transform.position, transform.parent);
                 newgo.name = transform.name;
                 // 激活状态的+ controller下的旗子的存储
-                MoveModel.Instance.flag[type] = newgo;
+                MoveModel.Instance.Flag[type] = newgo;
                 
                 transform.parent = onBeginParent;
             }
@@ -84,24 +84,8 @@ namespace QmDreamer.UI
             if (go.tag == "Position") //如果当前拖动物体下是：格子 -（没有物品）时
             {
 
-                // 此处应该是监听
-                SetPosAndParent(transform, go.transform);
-                transform.GetComponent<Image>().raycastTarget = true;
-                
-               // UnitPosition StartPosition = MoveModel.Instance.Fingbyname(go.name);
-               // EndDrogMess endDrogMess = new EndDrogMess(dirtion, StartPosition);
-                MoveModel.Instance.moveCache.Flag.Add(gameObject);
-               
-                //播放音乐
-                AudioManager.Instance.PlaySound(14);
 
-                // controller 的旗子变淡
-                MoveView.Instance.FadeFlag(type);
-                // 存储指令类型 为了撤退
-                MoveModel.Instance.moveCache.Drog.Add(1);
-                //触发委托 
-                // PlayEndDrog(endDrogMess);
-
+                PutSuccess(go);
 
             }
 
@@ -141,6 +125,53 @@ namespace QmDreamer.UI
 
        
 
+        private void PutSuccess(GameObject  go)
+        {
+            // 此处应该是监听
+            SetPosAndParent(transform, go.transform);
+            transform.GetComponent<Image>().raycastTarget = true;
+            MoveModel.Instance.moveCache.Flag.Add(gameObject);
+            //播放音乐
+            AudioManager.Instance.PlaySound(14);
+
+            // controller 的旗子变淡  中继站可以多个
+            if(type!=2)
+            {
+                MoveView.Instance.FadeFlag(type);
+            }
+          
+            // 存储指令类型 为了撤退
+            MoveModel.Instance.moveCache.Drog.Add(1);
+            // 存储重要位置的点 
+            unitPosition = MoveModel.Instance.Fingbyname(go.name);
+            StorePoistion();
+
+
+
+        }
+
+
+        /// <summary>
+        /// // 存入重要的点
+        /// </summary>
+        /// <param name="type">旗子的类型</param>
+        /// <param name="position">位置</param>
+        public void   StorePoistion (  )
+        {
+
+            if (type ==0)
+            {
+                MoveModel.Instance.importantPosition.Start = unitPosition;
+            }
+            else if (type==1)
+            {
+                MoveModel.Instance.importantPosition.Destination = unitPosition;
+            }
+            else
+            {
+                MoveModel.Instance.importantPosition.Middle.Add(unitPosition);
+            }
+        }
 
 
 

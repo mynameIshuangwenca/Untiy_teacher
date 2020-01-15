@@ -31,7 +31,8 @@ public class ObjectPool : MonoSingleton<ObjectPool>
         {
             tempgo.transform.position = position;   //设置位置
             tempgo.transform.rotation = quaternion; //旋转信息
-            tempgo.transform.parent = parent;
+            tempgo.transform.SetParent(parent);
+            //tempgo.transform.parent = parent;
         }
         else //否则，就是空了。（也就是没能从池子里取出对象）
         {

@@ -16,6 +16,8 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+   
+
     private Dictionary<int, string> audioPathDict;      // 存放音频文件路径
 
     private AudioSource musicAudioSource;
@@ -38,8 +40,17 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        //切换场景  只有一个
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
+        DontDestroyOnLoad(gameObject);
+
+
+       
 
         audioPathDict = new Dictionary<int, string>()       // 这里设置音频文件路径。需要修改。 TODO
         {

@@ -104,18 +104,19 @@ public class SQLiteHelper
     /// <returns>The values.</returns>
     /// <param name="tableName">数据表名称</param>
     /// <param name="values">插入的数值</param>
-    public SqliteDataReader InsertValues(string tableName, string[] values)
+    public SqliteDataReader InsertValues(string tableName, string[] colNames, string[] values)
     {
-        //获取数据表中字段数目
-        int fieldCount = ReadFullTable(tableName).FieldCount;
-        //当插入的数据长度不等于字段数目时引发异常
-        if (values.Length != fieldCount)
-        {
-            throw new SqliteException("values.Length!=fieldCount");
-        }
+        ////获取数据表中字段数目
+        //int fieldCount = ReadFullTable(tableName).FieldCount;
+        ////当插入的数据长度不等于字段数目时引发异常
+        //if (values.Length != fieldCount)
+        //{
+        //    throw new SqliteException("values.Length!=fieldCount");
+        //}
 
+        string colNameJoin = String.Join(", ", colNames);
 
-        string queryString = "INSERT INTO " + tableName + " VALUES (" + "'" + values[0] + "'";
+        string queryString = "INSERT INTO " + tableName+" (" + colNameJoin+ ")  VALUES (" + "'" + values[0] + "'";
 
         for (int i = 1; i < values.Length; i++)
         {
@@ -223,6 +224,22 @@ public class SQLiteHelper
         return ExecuteQuery(queryString);
     }
 
+    public SqliteDataReader CreateTable(string tableName, string[] colNames, string[] colTypes,string foreignKey,string forergnKeyTable)
+    {
+       // ExecuteQuery("PRAGMA foreign_keys = ON; ");
+        string queryString = "CREATE TABLE IF NOT EXISTS " + tableName + "( " + colNames[0] + " " + colTypes[0];
+
+        for (int i = 1; i < colNames.Length; i++)
+        {
+            queryString += ", " + colNames[i] + " " + colTypes[i];
+        }
+        queryString += ", ";
+        queryString += string.Format("  FOREIGN KEY ({0}) REFERENCES {1}({0})); ", foreignKey, forergnKeyTable);
+
+        return ExecuteQuery(queryString);
+    }
+
+
     /// <summary>
     /// Reads the table.
     /// </summary>
@@ -246,4 +263,10 @@ public class SQLiteHelper
         }
         return ExecuteQuery(queryString);
     }
+
+
+
+
 }
+
+

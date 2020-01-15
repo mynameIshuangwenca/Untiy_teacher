@@ -24,8 +24,8 @@ public class Tool : MonoSingleton<Tool>
 
     IEnumerator Loadscene(string nextSceneName)
     {
-       
-       
+
+
         AsyncOperation op = SceneManager.LoadSceneAsync(nextSceneName);
         yield return new WaitForEndOfFrame();
         op.allowSceneActivation = true;
@@ -33,16 +33,16 @@ public class Tool : MonoSingleton<Tool>
 
     }
 
-   /// <summary>
-   ///  返回上一个页面
-   /// </summary>
+    /// <summary>
+    ///  返回上一个页面
+    /// </summary>
     public void ReturnScene()
     {
         string sceneName;
-       if ((sceneName = PlayerPrefs.GetString("BeforeSence", null)) == null)
+        if ((sceneName = PlayerPrefs.GetString("BeforeSence", null)) == null)
         {
             Debug.Log("没有上一个sene");
-            return ;
+            return;
 
         }
         LoadScene(sceneName);
@@ -51,7 +51,7 @@ public class Tool : MonoSingleton<Tool>
     /// <summary>
     /// 重新加载
     /// </summary>
-    public  void Reload()
+    public void Reload()
     {
         Debug.Log("reload");
         Scene scene = SceneManager.GetActiveScene();
@@ -61,21 +61,21 @@ public class Tool : MonoSingleton<Tool>
 
     IEnumerator GetText(string name, Image image)
     {
-//        string path =
-//#if UNITY_ANDROID && !UNITY_EDITOR
-//		Application.streamingAssetsPath; //安卓的Application.streamingAssetsPath已默认有"file://"
-//#elif UNITY_IOS && !UNITY_EDITOR
-//		"file://" + Application.streamingAssetsPath;
-//#elif UNITY_STANDLONE_WIN || UNITY_EDITOR
-//        "file://" + Application.streamingAssetsPath;
-//#else
-//		string.Empty;
-//#endif
+        //        string path =
+        //#if UNITY_ANDROID && !UNITY_EDITOR
+        //		Application.streamingAssetsPath; //安卓的Application.streamingAssetsPath已默认有"file://"
+        //#elif UNITY_IOS && !UNITY_EDITOR
+        //		"file://" + Application.streamingAssetsPath;
+        //#elif UNITY_STANDLONE_WIN || UNITY_EDITOR
+        //        "file://" + Application.streamingAssetsPath;
+        //#else
+        //		string.Empty;
+        //#endif
 
         var uri = new System.Uri(Path.Combine(Application.streamingAssetsPath, name));
         var request = UnityWebRequest.Get(uri.AbsoluteUri);
 
-       // path =path + name;
+        // path =path + name;
         using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(uri.AbsoluteUri))
         {
             yield return uwr.SendWebRequest();
@@ -155,7 +155,7 @@ public class Tool : MonoSingleton<Tool>
     // 
     public int DirtFindByName(string name)
     {
-        for (int i= 0;i<Util.dirtion.Count;i++)
+        for (int i = 0; i < Util.dirtion.Count; i++)
         {
             if (name == Util.dirtion[i].ObjName)
                 return i;
@@ -166,19 +166,19 @@ public class Tool : MonoSingleton<Tool>
 
 
 
-    public void GetIJByName(string name,out int i,out int j)
+    public void GetIJByName(string name, out int i, out int j)
     {
         //如果在拆分时不需要包含空字符串，则可以使用 StringSplitOptions.RemoveEmptyEntries 选项，例如在上例中将 StringSplitOptions.None 更改成 StringSplitOptions.RemoveEmptyEntries
-        string[] result = name.Split('_' );
+        string[] result = name.Split('_');
         int length = result.Length;
-        i = int.Parse(result[length-2]);
-        j= int.Parse(result[length - 1]);
+        i = int.Parse(result[length - 2]);
+        j = int.Parse(result[length - 1]);
 
     }
 
-    public  string IJToName(int i,int j)
+    public string IJToName(int i, int j)
     {
-        return "Img_Map"  +"_" + i + "_" + j;
+        return "Img_Map" + "_" + i + "_" + j;
     }
 
     /// <summary>
@@ -188,19 +188,19 @@ public class Tool : MonoSingleton<Tool>
     /// <param name="name">传入的名字</param>
     /// <param name="index">类型 0-3 ：上下左右</param>
     /// <returns>得到的mapPos 名字</returns>
-    public string AroundName(string name,int index)
+    public string AroundName(string name, int index)
     {
         int i, j;
         GetIJByName(name, out i, out j);
-        if (index==0)
+        if (index == 0)
         {
             i += 1;
         }
-        else if (index==1)
+        else if (index == 1)
         {
             i--;
         }
-        else if(index==2)
+        else if (index == 2)
         {
             j++;
         }
@@ -208,7 +208,7 @@ public class Tool : MonoSingleton<Tool>
         {
             j--;
         }
-        
+
         return IJToName(i, j);
 
     }
@@ -216,7 +216,7 @@ public class Tool : MonoSingleton<Tool>
 
     public int TurnLeft(int dirt)
     {
-        int[] turn = {2,3,1,0};
+        int[] turn = { 2, 3, 1, 0 };
         return turn[dirt];
 
 
@@ -224,15 +224,15 @@ public class Tool : MonoSingleton<Tool>
 
     public int TurnRight(int dirt)
     {
-        int[] turn = {3,2,0,1};
+        int[] turn = { 3, 2, 0, 1 };
         return turn[dirt];
-       
+
     }
 
-   
-    public  void Fade (Image img ,bool flag)
+
+    public void Fade(Image img, bool flag)
     {
-      Color  color = img.color;
+        Color color = img.color;
         if (flag)
         {
             img.color = new Color(color.r, color.g, color.b, 1f);
@@ -242,7 +242,7 @@ public class Tool : MonoSingleton<Tool>
             img.color = new Color(color.r, color.g, color.b, 0.5f);
         }
 
-       
+
     }
 
     /// <summary>
@@ -254,6 +254,24 @@ public class Tool : MonoSingleton<Tool>
     {
         Fade(img, flag);
         img.raycastTarget = flag;
+    }
+
+    /// <summary>
+    /// 坐标变成字符串 i,j
+    /// </summary>
+    /// <param name="i"></param>
+    /// <param name="j"></param>
+    /// <returns> 生成字符串坐标</returns>
+    public string CoordinateToStr(int i , int j)
+  {
+        return string.Format("{0},{1}", i, j);
+     }
+
+    public void StrToCoordinate(string str,out int i,out int j)
+    {
+       string [] result= str.Split(',');
+       int.TryParse(result[0],out i);
+       int.TryParse(result[0],out j);  
     }
 
 
@@ -281,4 +299,16 @@ public class Tool : MonoSingleton<Tool>
         }
         return (T)retval;
     }
+
+    public void Quit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+Application.Quit();
+#endif
+    }
+
+
+
 }

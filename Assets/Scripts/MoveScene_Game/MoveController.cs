@@ -36,7 +36,9 @@ public class MoveController : MonoSingleton<MoveController>
 
 
     public GameObject tooltipUI;
-  
+    //声明委托
+    public  Action<EndDrogMess> StartPosEnter;
+   
 
     public EndDrogMess VirtualMess { get => virtualMess; set => virtualMess = value; }
 
@@ -44,8 +46,7 @@ public class MoveController : MonoSingleton<MoveController>
     private void Awake()
     {
         virtRotate = 0;
-        //PlayerDrog.EndDrog += this.EndDrog;
-        //ArrowDrog.ArrowEndDrog += ArrowEndDrog;
+      ;
         gameState = GameState.prepartion;
         InitGame();
     
@@ -61,12 +62,17 @@ public class MoveController : MonoSingleton<MoveController>
     // Update is called once per frame
     void Update()
     {
+
        
     }
+  
+       
+            //设置间隔时间为10秒
+          
+        
 
 
-   
-    private void InitGame()
+ private void InitGame()
     {  
 
         image = transform.Find("/Canvas/P_Backgound/P_Map/Img_Map").GetComponent<Image>();
@@ -85,46 +91,37 @@ public class MoveController : MonoSingleton<MoveController>
     public  void EndDrog(EndDrogMess endDrogMess)
     {
 
-        Debug.Log("EndDrog" + endDrogMess.Dirt);
+        FirstPlayerInMap();
         Debug.Log(endDrogMess.Position.Go.name);
         gameState = GameState.start;
        
         if (MoveModel.Instance.moveCache.VirutalPlayer==null)
         {
-            virtualPlayer = GenerateVirtualPlayer(virtualPlayerPrefab, endDrogMess.Position.Center, endDrogMess.Position.Go.transform, endDrogMess.Dirt);
+            virtualPlayer = GenerateVirtualPlayer(virtualPlayerPrefab, endDrogMess.Position.Center, MoveView.Instance.CacheParent, endDrogMess.Dirt);
             // 加入管理 方便回收
             MoveModel.Instance.moveCache.VirutalPlayer = virtualPlayer;
             // 生成但是隐藏
             virtualPlayer.SetActive(false);
+         
         }
         else
         {
             virtualPlayer.transform.position = endDrogMess.Position.Center;
         }
        
-
-      // 
-        //// MoveModel.Instance.ArrowAndPlayerObj.Add(virtualPlayer);
-        VirtualMess = endDrogMess;
+    
+        //virtualPlayer.transform.SetAsLastSibling();
+        // 作为开始的地址  委托
+          StartPosEnter(endDrogMess);
+        
+         VirtualMess = endDrogMess;
         originDirt = endDrogMess.Dirt;
-        // 深度复制
-        //originMess = originDirt.Copy<EndDrogMess>(endDrogMess); // 无法对vector3 序列号
-        // originMess = Tool.Clone<EndDrogMess>(endDrogMess);
-        //originMess = ETHotfix.DeepCopy.CopyOjbect(endDrogMess as object);
-
-
-
-
-
-
-
-
-
     }
 
     public  bool ArrowEndDrog(EndDrogMess endDrogMess)
     {
 
+        FirstArrowInMap();
         Debug.Log("ArrowEndDrog" + endDrogMess.Dirt);
         Debug.Log(endDrogMess.Position.Go.name);
         // 没有越界 
@@ -202,7 +199,7 @@ public class MoveController : MonoSingleton<MoveController>
 
         // 存储新的箭头
         MoveModel.Instance.moveCache.ArrowMap.Add(newGo);
-       // MoveModel.Instance.ArrowAndPlayerObj.Add(newGo);
+      
     }
 
 
@@ -382,7 +379,7 @@ public class MoveController : MonoSingleton<MoveController>
 
         }
 
-        Debug.Log("dasddd" + i + j);
+        
         MoveModel.Instance.orderData.Route.Add(MoveModel.Instance.Fingbyname(name));
         virtualMess.Position = MoveModel.Instance.Fingbyname(name);
         virtualPlayer.transform.position = virtualMess.Position.Center;
@@ -405,6 +402,8 @@ public class MoveController : MonoSingleton<MoveController>
             return null;
 
         }
+
+        MoveModel.Instance.sceneId = Id;
 
         levelCfg = Tool.Instance.GetLevelCfg(Id);
         if (levelCfg != null)
@@ -507,8 +506,8 @@ public class MoveController : MonoSingleton<MoveController>
         {
             AudioManager.Instance.PlayMusic(1);
         }
-       
 
+        StopCoroutine("HightLightOfArrow");
        
     }
 
@@ -547,6 +546,12 @@ public class MoveController : MonoSingleton<MoveController>
         //关闭音乐
         AudioManager.Instance.StopMusic();
 
+
+        if (gameState == GameState.pressing && MoveModel.Instance.moveCache.FadeIndex != 0)
+        {
+            LoopHightLightOfArrow();
+        }
+
     }
 
    /// <summary>
@@ -558,13 +563,15 @@ public class MoveController : MonoSingleton<MoveController>
     }
 
 
-    public  void  SetVirtualPlayer(bool flag)
+    public void SetVirtualPlayer(bool flag)
     {
+        virtualPlayer.transform.SetAsLastSibling();
+
         if (!virtualPlayer)
             return;
         virtualPlayer.SetActive(flag);
-    }
 
+    }
 
     public  void CleanData()
     {
@@ -590,15 +597,21 @@ public class MoveController : MonoSingleton<MoveController>
         {
             ObstacleBack();
         }
-       else
+       else if(index==3)
+        {
+            CellObstacleBack();
+        }
+       else 
         {
 
         }
       
     }
 
+   
+
     // 指令后退
-     public void  OrderBack()
+    public void  OrderBack()
     {
         int index = MoveModel.Instance.orderData.Order.Count;
         if (index <= 0) return;// 没有走动
@@ -677,16 +690,25 @@ public class MoveController : MonoSingleton<MoveController>
         int index = MoveModel.Instance.moveCache.Obstacle.Count;
         if (index <= 0) return;
 
-        // 障碍物的数据清除
+        // 障碍物的存放清除
         GameObject go = MoveModel.Instance.moveCache.Obstacle[index - 1];
         MoveModel.Instance.moveCache.Obstacle.RemoveAt(index - 1);
 
         // 销毁此物体
         go.GetComponent<ObstacleDrog>().GoDestroy();
+    }
 
-
-
-      
+/// <summary>
+/// cell障碍物的后退
+/// </summary>
+    private void CellObstacleBack()
+    {
+        int index = MoveModel.Instance.moveCache.Obstacle.Count;
+        if (index <= 0) return;
+        // 障碍物的存放清除
+        GameObject go = MoveModel.Instance.moveCache.Obstacle[index - 1];
+        MoveModel.Instance.moveCache.Obstacle.RemoveAt(index - 1);// 销毁此物体
+        go.GetComponent<CellObstacleDrog>().GoDestroy();
     }
 
     public void OutIndex()
@@ -696,15 +718,241 @@ public class MoveController : MonoSingleton<MoveController>
         AudioManager.Instance.PlaySound(11);
     }
 
-
+    // 提示框出现
     public void  FlagOnter(Vector3 postion ,string mess)
     {
         tooltipUI.GetComponent<TooltipUI>().Show(postion, mess);
     }
-
+    /// <summary>
+    /// /提示框消失
+    /// </summary>
     public void FlagExit()
     {
         tooltipUI.GetComponent<TooltipUI>().Hide();
     }
+
+
+    public void VirtualToNull()
+    {
+        virtualMess = null;
+    }
+
+    public  bool IsVirtual(string name)
+    {
+        if (virtualMess == null) return false;
+        if (name==virtualMess.Position.Go.name)
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    public void StoreRoute()
+    {
+        //判断路径是否大于1
+        if (MoveModel.Instance.orderData.Route.Count <= 1)
+        {
+            Debug.Log("没有路径");
+            return;
+        }
+        //获取使用此app 的用户
+          string userName=  PlayerPrefs.GetString("userName", string.Empty);
+        if (userName == string.Empty)
+        {
+            Debug.Log("用户不存在");
+            return;
+        }
+        //得到路径的字符串
+        string route = MoveModel.Instance.orderData.GetRoute();
+        //保存到数据库
+        SQLController.Instance.InsertRoute(userName,route);
+
+    }
+
+   
+    public void StoreRouteToDB()
+    {
+        //判断路径是否大于1
+        if (MoveModel.Instance.orderData.RouteOrder.Count <1)
+        {
+            Debug.Log("没有路径");
+            return;
+        }
+        //获取使用此app 的用户
+        string userName = PlayerPrefs.GetString("userName", string.Empty);
+        if (userName == string.Empty)
+        {
+            Debug.Log("用户不存在");
+            return;
+        }
+        RouteInfo routeInfo = new RouteInfo(0, MoveModel.Instance.sceneId, MoveModel.Instance.importantPosition.GetStartStr(), MoveModel.Instance.importantPosition.GetMiddleStr(), MoveModel.Instance.importantPosition.GetDestinationStr(), MoveModel.Instance.orderData.GetStoreRoute(), MoveModel.Instance.orderData.OrderToStr(),MoveModel.Instance.orderData.GetMiddleStepStr());
+        SQLController.Instance.InsertRoute(userName, routeInfo);
+    }
+
+    /// <summary>
+    /// route上的箭头高亮一遍 如跑马灯
+    /// </summary>
+    public void LoopHightLightOfRouteArrow()
+    {
+        StartCoroutine(HightLightOfRouteArrow());
+    }
+
+    IEnumerator HightLightOfRouteArrow()
+    {
+        GameObject preObj=null;
+        foreach (GameObject obj in MoveModel.Instance.moveCache.ArrowRoute)
+        {
+            if (obj == null) continue;
+            if  (preObj!=null && preObj.activeSelf)
+            {
+                Tool.Instance.Fade(preObj.GetComponent<Image>(), false);
+            }
+            if (obj.activeSelf)
+            {
+                Tool.Instance.Fade(obj.GetComponent<Image>(), true);
+                preObj = obj;
+            }
+            
+            yield return new WaitForSeconds(0.5f);
+        }
+        // 最后一个
+        if(preObj  != null)
+        {
+            Tool.Instance.Fade(preObj.GetComponent<Image>(), false);
+        }
+       
+
+    }
+
+    /// <summary>
+    /// 跑马灯开始的操作
+    /// </summary>
+    private void BeforeArrowLight()
+    {
+       
+        gameState = GameState.ArrowHightLight;
+    }
+    /// <summary>
+    /// 跑马灯结束时的操作
+    /// </summary>
+    private void AfterArrowLight()
+    {
+        gameState = GameState.pressing;
+    }
+
+    /// <summary>
+    /// map 和route 上的箭头一起高亮 跑马灯
+    /// </summary>
+    /// <param name="BeforeAction">开始的时的方法</param>
+    /// <param name="AfterAction">结束时的方法</param>
+    public void LoopHightLightOfArrow()
+    {
+        StartCoroutine("HightLightOfArrow");
+    }
+
+    /// <summary>
+    /// map 和route 上的箭头一起高亮 跑马灯
+    /// </summary>
+    /// <param name="mapArrow"></param>
+    /// <param name="routeArrow"></param>
+    /// <param name="BeforeAction"></param>
+    /// <param name="AfterAction"></param>
+    /// <returns></returns>
+
+    IEnumerator HightLightOfArrow()
+    {
+        GameObject preMapArrow = null;
+        GameObject preRouteArrow = null;
+        List<GameObject> mapArrow = MoveModel.Instance.moveCache.ArrowMap;
+        List<GameObject> routeArrow = MoveModel.Instance.moveCache.ArrowRoute;
+        int fadeIndex = MoveModel.Instance.moveCache.FadeIndex;
+        BeforeArrowLight();
+
+
+
+        while (MoveModel.Instance.moveCache.FadeIndex!=0)
+        {
+            for (int i = 0; i < fadeIndex; i++)
+            {
+                if (MoveModel.Instance.moveCache.FadeIndex != fadeIndex) break;
+                if (mapArrow[i] == null || routeArrow[i] == null) continue;
+                if (preMapArrow != null && preMapArrow.activeSelf)
+                {
+                    Tool.Instance.Fade(preMapArrow.GetComponent<Image>(), false);
+                }
+                if (preRouteArrow != null && preRouteArrow.activeSelf)
+                {
+                    Tool.Instance.Fade(preRouteArrow.GetComponent<Image>(), false);
+                }
+                if (mapArrow[i].activeSelf)
+                {
+                    Tool.Instance.Fade(mapArrow[i].GetComponent<Image>(), true);
+                    preMapArrow = mapArrow[i];
+                }
+                if (routeArrow[i].activeSelf)
+                {
+                    Tool.Instance.Fade(routeArrow[i].GetComponent<Image>(), true);
+                    preRouteArrow = routeArrow[i];
+                }
+                yield return new WaitForSeconds(0.5f);
+
+            }
+            // 最后一个
+            if (preMapArrow != null || preRouteArrow != null)
+            {
+                Tool.Instance.Fade(preMapArrow.GetComponent<Image>(), false);
+                Tool.Instance.Fade(preRouteArrow.GetComponent<Image>(), false);
+            }
+            yield return new WaitForSeconds(1f);
+        }
+
+
+
+
+        //if (AfterAction!=null)
+        //{
+        //    AfterAction();
+        //}
+        AfterArrowLight();
+
+    }
+
+
+    /// <summary>
+    /// player放到map 中的时候的操作
+    /// </summary>
+    public void FirstPlayerInMap()
+    {
+
+        //1、 其他的player变淡
+
+        // 旗子不能拖动了
+        MoveModel.Instance.moveCache.IsDrogFlag(false);
+       
+        //
+
+    }
+
+    /// <summary>
+    /// 第一个箭头放到Map 中
+    /// </summary>
+    public void FirstArrowInMap()
+    {
+        if(MoveModel.Instance.moveCache.ArrowMap.Count==0)
+        {
+            //1 在map中的player 不能拖动了 只能dotween
+
+            MoveModel.Instance.moveCache.IsDrogPlayer(false);
+        }
+       
+
+
+    }
+
+
+
+  
 
 }

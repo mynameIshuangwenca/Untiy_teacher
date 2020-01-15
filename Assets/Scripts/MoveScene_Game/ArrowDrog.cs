@@ -18,10 +18,10 @@ namespace QmDreamer.UI
        
         private Transform onBeginParent;
         //声明委托
-        public static Action<EndDrogMess> ArrowEndDrog;
+       // public static Action<EndDrogMess> ArrowEndDrog;
         protected override void Awake()
         {
-            onBeginParent = transform.Find("/Canvas/P_ArrowParent");
+            
         }
         protected override void Start()
         {
@@ -50,6 +50,7 @@ namespace QmDreamer.UI
                 // 使生成的名字一致 对象池
                 newGo.name = transform.name;
                 transform.parent = onBeginParent;
+                newGo.GetComponent<Image>().raycastTarget = true;
             }
            
             beginParentTransform = transform.parent;
@@ -84,7 +85,7 @@ namespace QmDreamer.UI
             }
             if (go.tag == "Position") //如果当前拖动物体下是：格子 -（没有物品）时
             {
-                if(MoveController.Instance.gameState<GameState.start || go.name != MoveController.Instance.VirtualMess.Position.Go.name)//
+                if(MoveController.Instance.gameState<GameState.start || !MoveController.Instance.IsVirtual(go.name))//
                 {
                     // 增加提示
                     Debug.Log("箭头没有放对位置");

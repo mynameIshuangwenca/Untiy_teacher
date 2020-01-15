@@ -67,6 +67,8 @@ namespace QmDreamer.UI
                 // 使生成的名字一致 对象池
                 newGo.name = transform.name;
                 transform.parent = onBeginParent;
+                newGo.GetComponent<Image>().raycastTarget = true;
+                newGo.GetComponent<ObstacleDrog>().Scale(0,0.8f);
             }
 
             beginParentTransform = transform.parent;
@@ -96,6 +98,7 @@ namespace QmDreamer.UI
         public void OnEndDrag(PointerEventData _)
         {
             GameObject go = _.pointerCurrentRaycast.gameObject;
+            Debug.Log(go.name);
             if (go == null)// 出去canvas了
             {
                 SetPosAndParent(transform, beginParentTransform);
@@ -311,7 +314,7 @@ namespace QmDreamer.UI
             // 销毁数据
             DestroyData();
             //恢复到原来的样子
-            Scale(0);
+            Scale(0, 1f);
             // 回收此物体
             ObjectPool.Instance.CollectObject(gameObject);
         }
@@ -319,33 +322,25 @@ namespace QmDreamer.UI
         ///   缩放障碍物
         /// </summary>
         /// <param name="index"> 0：缩 1：放</param>
-        public void Scale( int index)
+        public void Scale( int index,float duration=1f)
         {
-          if(type==0)
+            if (index == 0)
             {
-                if (index == 0)
-                {
-                    transform.DOScale(originScale, 2);
-                }
-                else
-                {
-                    transform.DOScale(originScale + new Vector3(0, originScale.y, 0), 2);
-                }
+                transform.DOScale(originScale, duration);
+            }
+            else if(type==0 )
+            {
+                transform.DOScale(originScale + new Vector3(originScale.x, originScale.y+0.08f, 0), duration);
+            }
+            else 
+            {
+                transform.DOScale(originScale + new Vector3(originScale.x+0.08f, originScale.y , 0), duration);
             }
 
-            else
-            {
-                if (index == 0)
-                {
-                    transform.DOScale(originScale, 2);
-                }
-                else
-                {
-                    transform.DOScale(originScale + new Vector3(originScale.x, 0, 0), 2);
-                }
-            }
 
         }
+
+       
 
     }
 

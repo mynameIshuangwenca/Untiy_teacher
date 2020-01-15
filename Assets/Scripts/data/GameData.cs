@@ -94,10 +94,87 @@ public class UnitPosition
 public class ImportantPosition
 {
    private  UnitPosition start;
-   private   UnitPosition destination;
+    private List<UnitPosition> middle;
+    private   UnitPosition destination;
+
+    public ImportantPosition()
+    {
+       
+        Middle = new List<UnitPosition>();
+       
+
+    }
 
     public UnitPosition Start { get => start; set => start = value; }
     public UnitPosition Destination { get => destination; set => destination = value; }
+    public List<UnitPosition> Middle { get => middle; set => middle = value; }
+
+
+    public void Clean()
+    {
+        start = null;
+        middle.Clear();
+        destination = null;
+    }
+
+    public string  PositionToStr(UnitPosition postion)
+    {
+        string reStr = string.Empty;
+        if (start != null)
+        {
+            reStr = string.Format("{0},{1}", postion.I, postion.J);
+        }
+
+        return reStr;
+    }
+
+    /// <summary>
+    /// 得到开始的字符串形式
+    /// </summary>
+    /// <returns></returns>
+    public string  GetStartStr()
+    {
+       return PositionToStr(start);
+    } 
+    /// <summary>
+    /// 得到终点的地址字符串
+    /// </summary>
+    /// <returns></returns>
+    public string  GetDestinationStr()
+    {
+        return PositionToStr(destination);
+    }
+    /// <summary>
+    /// 得到中继站的字符串
+    /// </summary>
+    /// <returns></returns>
+    public string GetMiddleStr()
+    {
+        string reStr = string.Empty;
+        if (middle.Count>0)
+        {
+            reStr += string.Format("{0},{1}", middle[0].I, middle[0].J);
+            for(int i=1;i<middle.Count;i++)
+            {
+                reStr+= string.Format("+{0},{1}", middle[i].I, middle[i].J);
+            }
+        }
+        return reStr;
+    }
+      
+    public string ToStr()
+    {
+       
+        string reStr = string.Empty;
+        reStr += string.Format("{0},{1}", start.I, start.J);
+        for (int i=1;i<middle.Count;i++)
+        {
+            reStr+= string.Format("{0},{1}", middle[i].I, middle[i].J);
+        }
+        reStr += string.Format("{0},{1}", destination.I, destination.J);
+        return reStr;
+
+    }
 }
 
 

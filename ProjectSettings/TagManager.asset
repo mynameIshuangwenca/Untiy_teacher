@@ -11,6 +11,8 @@ TagManager:
   - Right
   - Map
   - Dirtion
+  - Trash
+  - RouteArrowMode
   layers:
   - Default
   - TransparentFX
